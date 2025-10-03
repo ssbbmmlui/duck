@@ -123,7 +123,7 @@ class FeatherRemovalGame extends MiniGame {
         const uiManager = this.gameEngine.uiManager;
         
         // 創建工具按鈕 - 更好的布局
-        const hotWaterButton = uiManager.createButton({
+        this.hotWaterButton = uiManager.createButton({
             x: this.gameArea.x + 20,
             y: this.gameArea.y + 15,
             width: 100,
@@ -132,7 +132,7 @@ class FeatherRemovalGame extends MiniGame {
             onClick: () => this.selectTool('hot_water')
         });
 
-        const handButton = uiManager.createButton({
+        this.handButton = uiManager.createButton({
             x: this.gameArea.x + 130,
             y: this.gameArea.y + 15,
             width: 100,
@@ -150,9 +150,9 @@ class FeatherRemovalGame extends MiniGame {
             color: '#2563eb',
             align: 'right'
         });
-        
-        this.uiElements.push(hotWaterButton, handButton, this.featherCounter);
-        
+
+        this.uiElements.push(this.hotWaterButton, this.handButton, this.featherCounter);
+
         // 設置初始工具
         this.selectTool('hot_water');
     }
@@ -161,12 +161,18 @@ class FeatherRemovalGame extends MiniGame {
      * 選擇工具
      */
     selectTool(tool) {
+        // 如果選擇熱水但已經用過，則不允許
+        if (tool === 'hot_water' && this.hotWaterUsed) {
+            this.showMessage('熱水已經使用過了！請用手工拔毛。');
+            return;
+        }
+
         this.currentTool = tool;
-        
+
         // 更新說明文字
         if (this.instructions) {
             if (tool === 'hot_water') {
-                this.instructions.setText('點擊鴨子使用熱水軟化羽毛');
+                this.instructions.setText('點擊鴨子使用熱水軟化羽毛（僅能使用一次）');
             } else {
                 this.instructions.setText('點擊並拖拽移除軟化的羽毛');
             }
@@ -241,17 +247,23 @@ class FeatherRemovalGame extends MiniGame {
                 const distance = Math.sqrt(
                     Math.pow(feather.x - x, 2) + Math.pow(feather.y - y, 2)
                 );
-                
+
                 if (distance <= radius) {
                     feather.softened = true;
                 }
             }
         });
-        
+
         console.log('羽毛已軟化，現在可以用手拔除');
-        
+
+        // 禁用熱水按鈕
+        if (this.hotWaterButton) {
+            this.hotWaterButton.setEnabled(false);
+            this.hotWaterButton.setText('已使用');
+        }
+
         // 自動切換到手工工具
-        this.selectTool('hand');
+        this.currentTool = 'hand';
     }
 
     /**
@@ -390,13 +402,16 @@ class FeatherRemovalGame extends MiniGame {
      */
     renderToolHint(context) {
         const hintY = this.gameArea.y + this.gameArea.height - 30;
-        
-        context.fillStyle = '#654321';
-        context.font = '12px Microsoft JhengHei';
+
+        context.fillStyle = '#2d3748';
+        context.font = '14px Microsoft JhengHei';
         context.textAlign = 'left';
-        
-        if (this.currentTool === 'hot_water') {
-            context.fillText('💧 熱水工具已選擇 - 點擊鴨子進行燙毛', this.gameArea.x + 10, hintY);
+
+        if (this.currentTool === 'hot_water' && !this.hotWaterUsed) {
+            context.fillText('💧 熱水工具已選擇 - 點擊鴨子進行燙毛（僅能使用一次）', this.gameArea.x + 10, hintY);
+        } else if (this.currentTool === 'hot_water' && this.hotWaterUsed) {
+            context.fillStyle = '#e53e3e';
+            context.fillText('❌ 熱水已使用完畢 - 請切換到手工拔毛', this.gameArea.x + 10, hintY);
         } else {
             context.fillText('✋ 手工工具已選擇 - 拖拽移除軟化的羽毛', this.gameArea.x + 10, hintY);
         }
