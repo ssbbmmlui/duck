@@ -48,7 +48,16 @@ let gameEngine = null;
 async function initializeGame() {
     try {
         console.log('開始初始化北京烤鴨料理遊戲...');
-        
+
+        // 重新創建 canvas 元素
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.innerHTML = `
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+                <div id="uiOverlay"></div>
+            `;
+        }
+
         // 檢查必要的類別是否存在
         console.log('檢查必要類別...');
         if (typeof GameEngine === 'undefined') {

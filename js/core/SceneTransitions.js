@@ -468,4 +468,8 @@ class SceneTransitionManager {
     }
 }
 // 匯出到全域作用域
-window.SceneTransitions = SceneTransitions;
+window.SceneTransitionManager = SceneTransitionManager;
+window.FadeTransition = FadeTransition;
+window.SlideTransition = SlideTransition;
+window.WipeTransition = WipeTransition;
+window.BlindsTransition = BlindsTransition;

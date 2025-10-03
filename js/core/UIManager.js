@@ -830,3 +830,9 @@ class UIUtils {
 }
 // 匯出到全域作用域
 window.UIManager = UIManager;
+window.UIButton = UIButton;
+window.UILabel = UILabel;
+window.UIProgressBar = UIProgressBar;
+window.UIFeedbackEffect = UIFeedbackEffect;
+window.UIAnimation = UIAnimation;
+window.UIUtils = UIUtils;
