@@ -111,6 +111,7 @@ class CompletionScene extends Scene {
             text: '分數詳情',
             onClick: () => this.showScoreBreakdown()
         });
+        this.addUIElement(this.scoreBreakdownButton);
 
         // 創建成就顯示
         this.createAchievementDisplay();
@@ -127,6 +128,7 @@ class CompletionScene extends Scene {
             text: '知識回顧',
             onClick: () => this.showKnowledgeReview()
         });
+        this.addUIElement(this.knowledgeReviewButton);
 
         // 創建重新開始按鈕
         this.restartButton = uiManager.createButton({
@@ -137,6 +139,7 @@ class CompletionScene extends Scene {
             text: '重新遊戲',
             onClick: () => this.restartGame()
         });
+        this.addUIElement(this.restartButton);
 
         // 創建主選單按鈕
         this.mainMenuButton = uiManager.createButton({
@@ -147,6 +150,7 @@ class CompletionScene extends Scene {
             text: '主選單',
             onClick: () => this.returnToMainMenu()
         });
+        this.addUIElement(this.mainMenuButton);
 
         // 創建分享按鈕
         this.shareButton = uiManager.createButton({
@@ -157,6 +161,7 @@ class CompletionScene extends Scene {
             text: '分享成果',
             onClick: () => this.shareResults()
         });
+        this.addUIElement(this.shareButton);
 
         // 開始慶祝動畫
         this.startCelebrationAnimation();
@@ -368,6 +373,8 @@ class CompletionScene extends Scene {
             })
         };
 
+        this.addUIElement(this.scoreBreakdownPanel.closeButton);
+
         // 更新按鈕文字
         this.scoreBreakdownButton.setText('關閉詳情');
 
@@ -388,6 +395,7 @@ class CompletionScene extends Scene {
         // 移除分數詳情面板元素
         Object.values(this.scoreBreakdownPanel).forEach(element => {
             uiManager.removeUIElement(element);
+            this.removeUIElement(element);
         });
 
         this.scoreBreakdownPanel = null;
@@ -461,6 +469,8 @@ class CompletionScene extends Scene {
             })
         };
 
+        this.addUIElement(this.knowledgeReviewPanel.closeButton);
+
         // 更新按鈕文字
         this.knowledgeReviewButton.setText('關閉回顧');
 
@@ -481,6 +491,7 @@ class CompletionScene extends Scene {
         // 移除知識回顧面板元素
         Object.values(this.knowledgePanel).forEach(element => {
             uiManager.removeUIElement(element);
+            this.removeUIElement(element);
         });
 
         this.knowledgePanel = null;

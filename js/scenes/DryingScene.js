@@ -196,6 +196,7 @@ class DryingScene extends Scene {
             text: '開始懸掛',
             onClick: () => this.startCurrentStep()
         });
+        this.addUIElement(this.nextButton);
 
         // 創建返回按鈕
         this.backButton = uiManager.createButton({
@@ -206,6 +207,7 @@ class DryingScene extends Scene {
             text: '返回',
             onClick: () => this.goBack()
         });
+        this.addUIElement(this.backButton);
 
         // 創建晾胚進度顯示
         this.createDryingProgress();
@@ -468,6 +470,8 @@ class DryingScene extends Scene {
             })
         };
 
+        this.addUIElement(this.educationPanel.closeButton);
+
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('button_click');
         }
@@ -485,6 +489,7 @@ class DryingScene extends Scene {
         // 移除教育面板元素
         Object.values(this.educationPanel).forEach(element => {
             uiManager.removeUIElement(element);
+            this.removeUIElement(element);
         });
 
         this.educationPanel = null;

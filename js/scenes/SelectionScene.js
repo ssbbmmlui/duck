@@ -109,6 +109,7 @@ class SelectionScene extends Scene {
             text: '選材知識',
             onClick: () => this.toggleEducationPanel()
         });
+        this.addUIElement(educationButton);
 
         // 創建開始迷你遊戲按鈕
         this.nextButton = uiManager.createButton({
@@ -119,7 +120,8 @@ class SelectionScene extends Scene {
             text: '開始檢查',
             onClick: () => this.startMiniGames()
         });
-        this.nextButton.setEnabled(false); // 初始禁用
+        this.nextButton.setEnabled(false);
+        this.addUIElement(this.nextButton);
 
         // 創建返回按鈕
         this.backButton = uiManager.createButton({
@@ -130,6 +132,7 @@ class SelectionScene extends Scene {
             text: '返回',
             onClick: () => this.goBack()
         });
+        this.addUIElement(this.backButton);
 
         // 設置鴨子展示區域的高亮點
         this.setupDuckHighlights();
@@ -216,6 +219,8 @@ class SelectionScene extends Scene {
             })
         };
 
+        this.addUIElement(this.educationPanel.closeButton);
+
         // 標記教育內容已查看
         this.sceneProgress.educationViewed = true;
         this.updateSceneProgress();
@@ -237,6 +242,7 @@ class SelectionScene extends Scene {
         // 移除教育面板元素
         Object.values(this.educationPanel).forEach(element => {
             uiManager.removeUIElement(element);
+            this.removeUIElement(element);
         });
 
         this.educationPanel = null;

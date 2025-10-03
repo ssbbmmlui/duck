@@ -166,6 +166,7 @@ class ProcessingScene extends Scene {
             text: '開始褪毛',
             onClick: () => this.startCurrentStep()
         });
+        this.addUIElement(this.nextButton);
 
         // 創建返回按鈕
         this.backButton = uiManager.createButton({
@@ -176,6 +177,7 @@ class ProcessingScene extends Scene {
             text: '返回',
             onClick: () => this.goBack()
         });
+        this.addUIElement(this.backButton);
 
         console.log('處理場景設置完成');
     }
@@ -225,6 +227,7 @@ class ProcessingScene extends Scene {
             text: '學習技巧',
             onClick: () => this.showCurrentStepEducation()
         });
+        this.addUIElement(educationButton);
         
         this.addUIElement(educationButton);
     }
@@ -275,6 +278,8 @@ class ProcessingScene extends Scene {
             })
         };
 
+        this.addUIElement(this.educationPanel.closeButton);
+
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('button_click');
         }
@@ -292,6 +297,7 @@ class ProcessingScene extends Scene {
         // 移除教育面板元素
         Object.values(this.educationPanel).forEach(element => {
             uiManager.removeUIElement(element);
+            this.removeUIElement(element);
         });
 
         this.educationPanel = null;
