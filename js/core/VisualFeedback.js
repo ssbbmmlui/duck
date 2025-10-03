@@ -756,4 +756,10 @@ class AchievementNotification {
     }
 }
 // 匯出到全域作用域
-window.VisualFeedback = VisualFeedback;
+window.VisualFeedbackManager = VisualFeedbackManager;
+window.ScorePopup = ScorePopup;
+window.StarReward = StarReward;
+window.ConfettiEffect = ConfettiEffect;
+window.CompletionText = CompletionText;
+window.ProgressAnimation = ProgressAnimation;
+window.AchievementNotification = AchievementNotification;

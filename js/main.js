@@ -171,8 +171,8 @@ function checkBrowserCompatibility() {
 /**
  * 頁面載入完成後初始化遊戲
  */
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('頁面載入完成');
+function startGame() {
+    console.log('開始載入遊戲...');
     
     // 檢查瀏覽器相容性
     if (!checkBrowserCompatibility()) {
@@ -235,7 +235,15 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingBar.style.width = progress + '%';
         }
     }, 200);
-});
+}
+
+// 立即執行初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startGame);
+} else {
+    // DOM已經載入完成
+    startGame();
+}
 
 /**
  * 頁面卸載時清理資源
