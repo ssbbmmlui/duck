@@ -957,3 +957,5 @@ class RotationTimingGame extends MiniGame {
         console.log('翻轉時機遊戲清理完成');
     }
 }
+// 匯出到全域作用域
+window.RotationTimingGame = RotationTimingGame;

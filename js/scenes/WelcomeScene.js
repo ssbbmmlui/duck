@@ -428,3 +428,5 @@ class WelcomeScene extends Scene {
         this.hideKnowledge();
     }
 }
+// 匯出到全域作用域
+window.WelcomeScene = WelcomeScene;

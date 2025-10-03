@@ -828,3 +828,5 @@ class UIUtils {
         return { width, height };
     }
 }
+// 匯出到全域作用域
+window.UIManager = UIManager;

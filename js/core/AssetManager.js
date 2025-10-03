@@ -376,3 +376,5 @@ class AssetManager {
         };
     }
 }
+// 匯出到全域作用域
+window.AssetManager = AssetManager;

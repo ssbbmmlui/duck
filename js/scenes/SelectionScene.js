@@ -563,3 +563,5 @@ class SelectionScene extends Scene {
         this.hideEducationPanel();
     }
 }
+// 匯出到全域作用域
+window.SelectionScene = SelectionScene;

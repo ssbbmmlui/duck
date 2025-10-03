@@ -292,3 +292,7 @@ class SceneManager {
         this.registerScene('completion', CompletionScene);
     }
 }
+
+// 匯出到全域作用域
+window.Scene = Scene;
+window.SceneManager = SceneManager;

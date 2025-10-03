@@ -281,3 +281,5 @@ class AudioManager {
         };
     }
 }
+// 匯出到全域作用域
+window.AudioManager = AudioManager;

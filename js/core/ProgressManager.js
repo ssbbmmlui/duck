@@ -668,3 +668,5 @@ class ProgressManager {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 }
+// 匯出到全域作用域
+window.ProgressManager = ProgressManager;

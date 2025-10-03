@@ -672,3 +672,5 @@ class ProcessingScene extends Scene {
         this.hideEducationPanel();
     }
 }
+// 匯出到全域作用域
+window.ProcessingScene = ProcessingScene;

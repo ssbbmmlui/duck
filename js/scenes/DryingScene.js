@@ -1374,3 +1374,5 @@ class DryingScene extends Scene {
         this.hideEducationPanel();
     }
 }
+// 匯出到全域作用域
+window.DryingScene = DryingScene;

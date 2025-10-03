@@ -467,3 +467,5 @@ class SceneTransitionManager {
         return optimizedConfig;
     }
 }
+// 匯出到全域作用域
+window.SceneTransitions = SceneTransitions;

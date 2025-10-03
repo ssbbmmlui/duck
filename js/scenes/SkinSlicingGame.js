@@ -886,3 +886,5 @@ class SkinSlicingGame extends MiniGame {
         super.cleanup();
     }
 }
+// 匯出到全域作用域
+window.SkinSlicingGame = SkinSlicingGame;

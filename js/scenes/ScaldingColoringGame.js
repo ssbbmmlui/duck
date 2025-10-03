@@ -1024,3 +1024,5 @@ class ScaldingColoringGame extends MiniGame {
                this.coloringPhase.uniformity >= 70;
     }
 }
+// 匯出到全域作用域
+window.ScaldingColoringGame = ScaldingColoringGame;

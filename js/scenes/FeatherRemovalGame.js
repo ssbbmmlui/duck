@@ -612,3 +612,5 @@ class FeatherRemovalGame extends MiniGame {
         return bonus;
     }
 }
+// 匯出到全域作用域
+window.FeatherRemovalGame = FeatherRemovalGame;

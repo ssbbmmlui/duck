@@ -452,3 +452,5 @@ class DuckQualityGame extends MiniGame {
         return excellentCount * 10 + goodCount * 5;
     }
 }
+// 匯出到全域作用域
+window.DuckQualityGame = DuckQualityGame;

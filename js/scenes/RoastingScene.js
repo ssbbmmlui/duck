@@ -1442,3 +1442,5 @@ class RoastingScene extends Scene {
         context.strokeRect(panelX, panelY, panelWidth, panelHeight);
     }
 }
+// 匯出到全域作用域
+window.RoastingScene = RoastingScene;

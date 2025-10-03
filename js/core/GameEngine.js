@@ -952,7 +952,10 @@ class GameEngine {
         if (this.sceneTransitions) {
             this.sceneTransitions.setLowPerformanceMode(true);
         }
-        
+
         console.log('低效能模式已啟用');
     }
 }
+
+// 匯出到全域作用域
+window.GameEngine = GameEngine;

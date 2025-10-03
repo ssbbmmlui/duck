@@ -863,3 +863,5 @@ class TemperatureControlGame extends MiniGame {
         console.log('溫度控制遊戲清理完成');
     }
 }
+// 匯出到全域作用域
+window.TemperatureControlGame = TemperatureControlGame;

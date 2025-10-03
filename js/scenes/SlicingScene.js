@@ -1322,3 +1322,5 @@ class SlicingScene extends Scene {
         context.restore();
     }
 }
+// 匯出到全域作用域
+window.SlicingScene = SlicingScene;

@@ -755,3 +755,5 @@ class AchievementNotification {
         return this.finished;
     }
 }
+// 匯出到全域作用域
+window.VisualFeedback = VisualFeedback;

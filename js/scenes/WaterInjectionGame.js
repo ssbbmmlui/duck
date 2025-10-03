@@ -709,3 +709,5 @@ class WaterInjectionGame extends MiniGame {
         console.log('灌湯遊戲清理完成');
     }
 }
+// 匯出到全域作用域
+window.WaterInjectionGame = WaterInjectionGame;

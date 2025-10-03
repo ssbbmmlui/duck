@@ -756,3 +756,5 @@ class HangingEnvironmentGame extends MiniGame {
         console.log('懸掛環境控制遊戲清理完成');
     }
 }
+// 匯出到全域作用域
+window.HangingEnvironmentGame = HangingEnvironmentGame;

@@ -602,3 +602,5 @@ class WeightMeasurementGame extends MiniGame {
         return 0;
     }
 }
+// 匯出到全域作用域
+window.WeightMeasurementGame = WeightMeasurementGame;

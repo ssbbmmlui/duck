@@ -707,3 +707,5 @@ class CompletionScene extends Scene {
         if (this.completionLabel) uiManager.removeUIElement(this.completionLabel);
     }
 }
+// 匯出到全域作用域
+window.CompletionScene = CompletionScene;

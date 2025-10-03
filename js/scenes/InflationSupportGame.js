@@ -823,3 +823,5 @@ class InflationSupportGame extends MiniGame {
         return this.inflationCompleted && this.supportCompleted;
     }
 }
+// 匯出到全域作用域
+window.InflationSupportGame = InflationSupportGame;

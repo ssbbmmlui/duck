@@ -409,3 +409,5 @@ class MiniGame {
         };
     }
 }
+// 匯出到全域作用域
+window.MiniGame = MiniGame;

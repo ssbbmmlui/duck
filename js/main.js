@@ -3,6 +3,42 @@
  * 負責初始化和啟動北京烤鴨料理遊戲
  */
 
+// 導入所有類別（使用相對路徑）
+import './core/GameEngine.js';
+import './core/Scene.js';
+import './core/MiniGame.js';
+import './core/AssetManager.js';
+import './core/AudioManager.js';
+import './core/ProgressManager.js';
+import './core/UIManager.js';
+import './core/VisualFeedback.js';
+import './core/SceneTransitions.js';
+
+// 導入場景
+import './scenes/WelcomeScene.js';
+import './scenes/SelectionScene.js';
+import './scenes/ProcessingScene.js';
+import './scenes/PreparationScene.js';
+import './scenes/DryingScene.js';
+import './scenes/RoastingScene.js';
+import './scenes/SlicingScene.js';
+import './scenes/CompletionScene.js';
+
+// 導入迷你遊戲
+import './scenes/DuckQualityGame.js';
+import './scenes/WeightMeasurementGame.js';
+import './scenes/FeatherRemovalGame.js';
+import './scenes/OpeningCleaningGame.js';
+import './scenes/InflationSupportGame.js';
+import './scenes/ScaldingColoringGame.js';
+import './scenes/HangingEnvironmentGame.js';
+import './scenes/WaterInjectionGame.js';
+import './scenes/TemperatureControlGame.js';
+import './scenes/RotationTimingGame.js';
+import './scenes/SkinSlicingGame.js';
+import './scenes/MeatSlicingGame.js';
+import './scenes/PlatingArrangementGame.js';
+
 // 全域遊戲實例
 let gameEngine = null;
 
@@ -260,3 +296,6 @@ window.addEventListener('unhandledrejection', (event) => {
  */
 window.gameEngine = gameEngine;
 window.initializeGame = initializeGame;
+
+// 確保類別在全域可用
+console.log('Main.js模組已載入');
