@@ -371,36 +371,49 @@ class UIButton {
         context.scale(this.scale, this.scale);
         context.translate(-centerX, -centerY);
 
-        // 按鈕背景
-        let bgColor = '#FFD700';
-        let borderColor = '#FF8C00';
-        
+        // Modern button colors - professional blue/teal scheme
+        let bgColor = '#3b82f6'; // Blue
+        let textColor = '#ffffff';
+        let shadowBlur = 8;
+        let shadowColor = 'rgba(59, 130, 246, 0.3)';
+
         if (!this.enabled) {
-            bgColor = '#CCCCCC';
-            borderColor = '#999999';
+            bgColor = '#cbd5e0';
+            textColor = '#718096';
+            shadowColor = 'rgba(0, 0, 0, 0.1)';
+            shadowBlur = 4;
         } else if (this.isPressed) {
-            bgColor = '#FFA500';
+            bgColor = '#2563eb';
+            shadowBlur = 4;
         } else if (this.isHovered) {
-            bgColor = '#FFED4E';
+            bgColor = '#60a5fa';
+            shadowBlur = 12;
+            shadowColor = 'rgba(59, 130, 246, 0.5)';
         }
 
-        // 繪製陰影效果
+        // Modern shadow effect
         if (this.enabled && !this.isPressed) {
-            context.fillStyle = 'rgba(0, 0, 0, 0.2)';
-            context.fillRect(this.x + 2, this.y + 2, this.width, this.height);
+            context.shadowColor = shadowColor;
+            context.shadowBlur = shadowBlur;
+            context.shadowOffsetX = 0;
+            context.shadowOffsetY = 4;
         }
 
-        // 繪製按鈕背景
+        // Draw rounded button background
+        const radius = 10;
         context.fillStyle = bgColor;
-        context.fillRect(this.x, this.y, this.width, this.height);
-        
-        // 繪製邊框
-        context.strokeStyle = borderColor;
-        context.lineWidth = 2;
-        context.strokeRect(this.x, this.y, this.width, this.height);
-        
-        // 繪製文字
-        context.fillStyle = this.enabled ? '#8B4513' : '#666666';
+        context.beginPath();
+        context.roundRect(this.x, this.y, this.width, this.height, radius);
+        context.fill();
+
+        // Reset shadow
+        context.shadowColor = 'transparent';
+        context.shadowBlur = 0;
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+
+        // Draw text
+        context.fillStyle = textColor;
         context.font = `bold 16px Microsoft JhengHei, PingFang TC, Heiti TC, sans-serif`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';

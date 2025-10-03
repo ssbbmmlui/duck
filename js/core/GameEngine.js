@@ -367,9 +367,16 @@ class GameEngine {
             // 優化Canvas渲染
             this.optimizeCanvasRendering();
             
-            // 清空畫布
+            // 清空畫布並繪製現代背景
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            
+
+            // 現代漸層背景
+            const gradient = this.context.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(1, '#f8f9fa');
+            this.context.fillStyle = gradient;
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
             // 渲染當前場景
             if (this.sceneManager.currentScene) {
                 this.sceneManager.currentScene.render(this.context);

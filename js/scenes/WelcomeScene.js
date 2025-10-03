@@ -60,23 +60,23 @@ class WelcomeScene extends Scene {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
         
-        // 創建標題
+        // 創建標題 - 現代化配色
         this.titleLabel = uiManager.createLabel({
             x: canvas.width / 2,
             y: 100,
             text: '北京烤鴨料理遊戲',
-            fontSize: 32,
-            color: '#8B4513',
+            fontSize: 36,
+            color: '#1a202c',
             align: 'center'
         });
 
-        // 創建說明文字
+        // 創建說明文字 - 現代化配色
         this.instructionLabel = uiManager.createLabel({
             x: canvas.width / 2,
-            y: 200,
+            y: 160,
             text: '學習正宗北京烤鴨的製作工藝',
             fontSize: 18,
-            color: '#654321',
+            color: '#4a5568',
             align: 'center'
         });
 
@@ -91,13 +91,13 @@ class WelcomeScene extends Scene {
         });
         this.addUIElement(this.startButton);
 
-        // 創建設定標籤
+        // 創建設定標籤 - 現代化配色
         this.settingsLabel = uiManager.createLabel({
             x: canvas.width / 2,
             y: canvas.height / 2 + 120,
             text: '遊戲設定',
             fontSize: 16,
-            color: '#8B4513',
+            color: '#2d3748',
             align: 'center'
         });
 

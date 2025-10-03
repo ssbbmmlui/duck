@@ -122,32 +122,32 @@ class FeatherRemovalGame extends MiniGame {
         
         const uiManager = this.gameEngine.uiManager;
         
-        // 創建工具按鈕
+        // 創建工具按鈕 - 更好的布局
         const hotWaterButton = uiManager.createButton({
-            x: this.gameArea.x + 10,
-            y: this.gameArea.y + 10,
-            width: 80,
-            height: 35,
+            x: this.gameArea.x + 20,
+            y: this.gameArea.y + 15,
+            width: 100,
+            height: 40,
             text: '熱水燙毛',
             onClick: () => this.selectTool('hot_water')
         });
-        
+
         const handButton = uiManager.createButton({
-            x: this.gameArea.x + 100,
-            y: this.gameArea.y + 10,
-            width: 80,
-            height: 35,
+            x: this.gameArea.x + 130,
+            y: this.gameArea.y + 15,
+            width: 100,
+            height: 40,
             text: '手工拔毛',
             onClick: () => this.selectTool('hand')
         });
-        
-        // 創建羽毛計數器
+
+        // 創建羽毛計數器 - 更清晰的位置
         this.featherCounter = uiManager.createLabel({
-            x: this.gameArea.x + this.gameArea.width - 10,
-            y: this.gameArea.y + 30,
-            text: `剩餘羽毛: ${this.totalFeathers - this.removedFeathers}`,
-            fontSize: 14,
-            color: '#654321',
+            x: this.gameArea.x + this.gameArea.width - 20,
+            y: this.gameArea.y + 35,
+            text: `剩餘: ${this.totalFeathers - this.removedFeathers}`,
+            fontSize: 18,
+            color: '#2563eb',
             align: 'right'
         });
         
@@ -406,14 +406,22 @@ class FeatherRemovalGame extends MiniGame {
      * 處理遊戲特定輸入
      */
     handleGameInput(event) {
-        if (event.type === 'mousedown' || event.type === 'click') {
+        if (event.type === 'mousedown') {
             return this.handleClick(event.x, event.y);
-        } else if (event.type === 'mousemove' && this.isDragging) {
-            return this.handleDrag(event.x, event.y);
-        } else if (event.type === 'mouseup' && this.isDragging) {
-            return this.handleDragEnd(event.x, event.y);
+        } else if (event.type === 'click' && this.currentTool === 'hot_water') {
+            return this.handleClick(event.x, event.y);
+        } else if (event.type === 'mousemove') {
+            if (this.isDragging) {
+                return this.handleDrag(event.x, event.y);
+            }
+            return false;
+        } else if (event.type === 'mouseup') {
+            if (this.isDragging) {
+                return this.handleDragEnd(event.x, event.y);
+            }
+            return false;
         }
-        
+
         return false;
     }
 
@@ -539,15 +547,24 @@ class FeatherRemovalGame extends MiniGame {
     removeFeather(feather) {
         feather.removed = true;
         this.removedFeathers++;
-        
+
+        // 更新計數器
+        if (this.featherCounter) {
+            this.featherCounter.setText(`剩餘: ${this.totalFeathers - this.removedFeathers}`);
+        }
+
         // 創建粒子效果
         this.createRemovalParticles(feather.x, feather.y);
-        
+
         // 播放音效
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('feather_remove');
         }
-        
+
+        // 更新進度
+        const progress = this.removedFeathers / this.totalFeathers;
+        this.updateProgress(progress);
+
         console.log(`移除羽毛，剩餘: ${this.totalFeathers - this.removedFeathers}`);
     }
 
