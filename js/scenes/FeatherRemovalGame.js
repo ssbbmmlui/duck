@@ -28,7 +28,7 @@ class FeatherRemovalGame extends MiniGame {
             x: 0,
             y: 0,
             radius: 0,
-            maxRadius: 80
+            maxRadius: 150 // 增加範圍以覆蓋整隻鴨子
         };
         
         // 鴨子圖像
@@ -83,7 +83,7 @@ class FeatherRemovalGame extends MiniGame {
                 x: duck.x + Math.random() * duck.width,
                 y: duck.y + Math.random() * duck.height,
                 size: 8 + Math.random() * 12, // 羽毛大小
-                type: Math.random() > 0.7 ? 'stubborn' : 'normal', // 頑固羽毛需要熱水
+                type: Math.random() > 0.85 ? 'stubborn' : 'normal', // 只有15%是頑固羽毛
                 removed: false,
                 softened: false, // 是否被熱水軟化
                 angle: Math.random() * Math.PI * 2,
@@ -461,21 +461,22 @@ class FeatherRemovalGame extends MiniGame {
         const duck = this.duckPosition;
         if (x >= duck.x && x <= duck.x + duck.width &&
             y >= duck.y && y <= duck.y + duck.height) {
-            
+
             this.hotWaterEffect.active = true;
-            this.hotWaterEffect.x = x;
-            this.hotWaterEffect.y = y;
+            // 將熱水效果置於鴨子中心，確保覆蓋所有羽毛
+            this.hotWaterEffect.x = duck.x + duck.width / 2;
+            this.hotWaterEffect.y = duck.y + duck.height / 2;
             this.hotWaterEffect.radius = 0;
             this.hotWaterUsed = true;
-            
+
             // 播放音效
             if (this.gameEngine.gameState.settings.soundEnabled) {
                 this.gameEngine.audioManager.playSound('water_splash');
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
 
