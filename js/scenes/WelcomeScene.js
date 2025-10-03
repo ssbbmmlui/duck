@@ -89,6 +89,7 @@ class WelcomeScene extends Scene {
             text: '開始遊戲',
             onClick: () => this.startGame()
         });
+        this.addUIElement(this.startButton);
 
         // 創建設定標籤
         this.settingsLabel = uiManager.createLabel({
@@ -110,6 +111,7 @@ class WelcomeScene extends Scene {
             text: soundEnabled ? '音效：開啟' : '音效：關閉',
             onClick: () => this.toggleSound()
         });
+        this.addUIElement(this.soundToggleButton);
 
         // 創建遊戲說明按鈕
         this.instructionsButton = uiManager.createButton({
@@ -120,6 +122,7 @@ class WelcomeScene extends Scene {
             text: '遊戲說明',
             onClick: () => this.showInstructions()
         });
+        this.addUIElement(this.instructionsButton);
 
         // 創建知識庫按鈕
         this.knowledgeButton = uiManager.createButton({
@@ -130,6 +133,7 @@ class WelcomeScene extends Scene {
             text: '知識庫',
             onClick: () => this.showKnowledge()
         });
+        this.addUIElement(this.knowledgeButton);
     }
 
     /**
