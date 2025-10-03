@@ -581,7 +581,7 @@ class FeatherRemovalGame extends MiniGame {
         const progress = this.removedFeathers / this.totalFeathers;
         this.updateProgress(progress);
 
-        console.log(`移除羽毛，剩餘: ${this.totalFeathers - this.removedFeathers}`);
+        console.log(`移除羽毛，剩餘: ${this.totalFeathers - this.removedFeathers}, 進度: ${progress}, 已完成: ${this.isCompleted}`);
     }
 
     /**

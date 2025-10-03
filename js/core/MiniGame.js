@@ -265,6 +265,7 @@ class MiniGame {
      * 檢查完成條件
      */
     checkCompletion() {
+        console.log(`檢查完成: progress=${this.progress}, threshold=${this.config.successThreshold}, isCompleted=${this.isCompleted}`);
         if (this.progress >= this.config.successThreshold) {
             this.complete(true);
         }

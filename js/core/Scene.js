@@ -156,23 +156,23 @@ class Scene {
         this.currentMiniGame.start();
         
         // 設置完成回調
-        this.currentMiniGame.onComplete = (success) => {
-            this.onMiniGameComplete(success);
+        this.currentMiniGame.onComplete = (success, stats) => {
+            this.onMiniGameComplete(success, stats);
         };
     }
 
     /**
      * 迷你遊戲完成回調
      */
-    onMiniGameComplete(success) {
+    onMiniGameComplete(success, stats) {
         if (success) {
-            console.log('迷你遊戲完成成功');
+            console.log('迷你遊戲完成成功', stats);
             // 更新進度
             this.gameEngine.progressManager.completeStep(this.name);
         } else {
             console.log('迷你遊戲失敗，可以重試');
         }
-        
+
         this.currentMiniGame = null;
     }
 
