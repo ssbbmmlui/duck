@@ -507,12 +507,15 @@ class ScaldingColoringGame extends MiniGame {
             this.scaldingCompleted = true;
             this.gamePhase = 'coloring';
             this.coloringPhase.active = true;
-            
+
             // 更新說明
             if (this.instructions) {
                 this.instructions.setText(this.getInstructions());
             }
-            
+
+            // 顯示提示訊息
+            this.showMessage('燙皮完成！現在請用刷子塗抹糖漿');
+
             console.log('燙皮完成，進入上糖色階段');
         }
     }
@@ -1019,9 +1022,21 @@ class ScaldingColoringGame extends MiniGame {
      * 檢查遊戲完成條件
      */
     checkWinCondition() {
-        return this.scaldingCompleted && 
-               this.duckEmbryo.coloringProgress >= 80 && 
-               this.coloringPhase.uniformity >= 70;
+        return this.scaldingCompleted &&
+               this.duckEmbryo.coloringProgress >= 60 &&
+               this.coloringPhase.uniformity >= 50;
+    }
+
+    /**
+     * 覆寫檢查完成方法
+     */
+    checkCompletion() {
+        console.log(`檢查完成條件: 燙皮=${this.scaldingCompleted}, 上色=${this.duckEmbryo.coloringProgress}%, 均勻度=${this.coloringPhase.uniformity}%`);
+
+        if (this.checkWinCondition()) {
+            console.log('燫皮上糖色遊戲完成！');
+            this.complete(true);
+        }
     }
 }
 // 匯出到全域作用域
