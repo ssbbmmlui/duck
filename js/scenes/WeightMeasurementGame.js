@@ -534,26 +534,26 @@ class WeightMeasurementGame extends MiniGame {
      */
     handleGameInput(event) {
         const duck = this.duck;
-        
-        if (event.type === 'click') {
+
+        if (event.type === 'mousedown') {
             // 檢查是否點擊了鴨子
             if (event.x >= duck.x && event.x <= duck.x + duck.width &&
                 event.y >= duck.y && event.y <= duck.y + duck.height) {
-                
+
                 // 開始拖拽
                 duck.isDragging = true;
                 duck.dragOffsetX = event.x - duck.x;
                 duck.dragOffsetY = event.y - duck.y;
-                
+
                 this.dragSystem.isDragging = true;
                 this.dragSystem.dragTarget = duck;
                 this.dragSystem.lastMouseX = event.x;
                 this.dragSystem.lastMouseY = event.y;
-                
+
                 // 重置物理
                 this.physics.velocityX = 0;
                 this.physics.velocityY = 0;
-                
+
                 return true;
             }
         } else if (event.type === 'mousemove' && this.dragSystem.isDragging) {
