@@ -191,33 +191,66 @@ class SelectionScene extends Scene {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
 
+        // 分割內容為多行
+        const contentLines = [
+            '🦆 優質北京填鴨的特徵：',
+            '',
+            '📏 體型標準：',
+            '• 體重：2.5-3.5公斤為佳',
+            '• 體型：胸部豐滿，腹部不過於肥大',
+            '• 比例：頭小頸短，身體勻稱',
+            '',
+            '🎨 外觀特徵：',
+            '• 皮膚：淡黃色，光滑有彈性',
+            '• 羽毛：白色，乾淨整潔',
+            '• 眼睛：明亮有神，無分泌物',
+            '',
+            '🏥 健康指標：',
+            '• 肌肉：結實有彈性',
+            '• 脂肪：分佈均勻，不過厚',
+            '• 氣味：新鮮，無異味',
+            '',
+            '💡 選材小貼士：',
+            '• 選擇45-60天齡的填鴨',
+            '• 確保來源可靠，檢疫合格',
+            '• 宰殺後應儘快處理'
+        ];
+
         // 創建教育面板
         this.educationPanel = {
             title: uiManager.createLabel({
                 x: canvas.width / 2,
-                y: 120,
+                y: 70,
                 text: this.educationContent.title,
-                fontSize: 20,
+                fontSize: 18,
                 color: '#FFD700',
                 align: 'center'
             }),
-            content: uiManager.createLabel({
-                x: 80,
-                y: 160,
-                text: this.educationContent.content,
-                fontSize: 14,
-                color: '#FFFFFF',
-                align: 'left'
-            }),
+            contentLabels: [],
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
-                y: canvas.height - 120,
+                y: canvas.height - 80,
                 width: 80,
                 height: 35,
                 text: '關閉',
                 onClick: () => this.hideEducationPanel()
             })
         };
+
+        // 創建每一行內容
+        const startY = 110;
+        const lineHeight = 18;
+        contentLines.forEach((line, index) => {
+            const label = uiManager.createLabel({
+                x: 70,
+                y: startY + (index * lineHeight),
+                text: line,
+                fontSize: 13,
+                color: '#FFFFFF',
+                align: 'left'
+            });
+            this.educationPanel.contentLabels.push(label);
+        });
 
         this.addUIElement(this.educationPanel.closeButton);
 
@@ -239,11 +272,25 @@ class SelectionScene extends Scene {
         this.showingEducation = false;
         const uiManager = this.gameEngine.uiManager;
 
-        // 移除教育面板元素
-        Object.values(this.educationPanel).forEach(element => {
-            uiManager.removeUIElement(element);
-            this.removeUIElement(element);
-        });
+        // 移除標題
+        if (this.educationPanel.title) {
+            uiManager.removeUIElement(this.educationPanel.title);
+            this.removeUIElement(this.educationPanel.title);
+        }
+
+        // 移除所有內容標籤
+        if (this.educationPanel.contentLabels) {
+            this.educationPanel.contentLabels.forEach(label => {
+                uiManager.removeUIElement(label);
+                this.removeUIElement(label);
+            });
+        }
+
+        // 移除關閉按鈕
+        if (this.educationPanel.closeButton) {
+            uiManager.removeUIElement(this.educationPanel.closeButton);
+            this.removeUIElement(this.educationPanel.closeButton);
+        }
 
         this.educationPanel = null;
     }
@@ -374,13 +421,13 @@ class SelectionScene extends Scene {
      */
     renderEducationPanelBackground(context) {
         // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
+        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        context.fillRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
+
         // 繪製邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 2;
-        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
+        context.strokeRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
     }
 
     /**
