@@ -147,26 +147,26 @@ class SelectionScene extends Scene {
         this.duckDisplay.highlightAreas = [
             {
                 name: '頭部',
-                x: this.duckDisplay.x + 47,
+                x: this.duckDisplay.x + 5,
                 y: this.duckDisplay.y + 10,
-                width: 45,
-                height: 35,
+                width: 55,
+                height: 45,
                 info: '頭部應該小巧，眼睛明亮'
             },
             {
                 name: '胸部',
-                x: this.duckDisplay.x + 35,
-                y: this.duckDisplay.y + 60,
-                width: 40,
-                height: 23,
+                x: this.duckDisplay.x + 60,
+                y: this.duckDisplay.y + 50,
+                width: 65,
+                height: 40,
                 info: '胸部應該豐滿，肌肉結實'
             },
             {
                 name: '腹部',
-                x: this.duckDisplay.x + 40,
+                x: this.duckDisplay.x + 55,
                 y: this.duckDisplay.y + 95,
-                width: 75,
-                height: 18,
+                width: 85,
+                height: 45,
                 info: '腹部不應過於肥大'
             }
         ];
@@ -420,37 +420,14 @@ class SelectionScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        const panelX = 40;
-        const panelY = 50;
-        const panelWidth = context.canvas.width - 80;
-        const panelHeight = context.canvas.height - 130;
+        // 繪製半透明背景
+        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        context.fillRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
 
-        // 繪製外層半透明遮罩（整個畫布）
-        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-        // 繪製內層淺色背景（內容區域）
-        context.fillStyle = '#F5E6D3';
-        context.fillRect(panelX, panelY, panelWidth, panelHeight);
-
-        // 繪製內容區域的深色背景
-        const contentX = panelX + 20;
-        const contentY = panelY + 50;
-        const contentWidth = panelWidth - 40;
-        const contentHeight = panelHeight - 120;
-
-        context.fillStyle = 'rgba(40, 40, 35, 0.95)';
-        context.fillRect(contentX, contentY, contentWidth, contentHeight);
-
-        // 繪製外框（金色邊框）
-        context.strokeStyle = '#FFD700';
-        context.lineWidth = 3;
-        context.strokeRect(panelX, panelY, panelWidth, panelHeight);
-
-        // 繪製內容區域邊框
+        // 繪製邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 2;
-        context.strokeRect(contentX, contentY, contentWidth, contentHeight);
+        context.strokeRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
     }
 
     /**
