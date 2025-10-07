@@ -420,14 +420,37 @@ class SelectionScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-        context.fillRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
+        const panelX = 40;
+        const panelY = 50;
+        const panelWidth = context.canvas.width - 80;
+        const panelHeight = context.canvas.height - 130;
 
-        // 繪製邊框
+        // 繪製外層半透明遮罩（整個畫布）
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // 繪製內層淺色背景（內容區域）
+        context.fillStyle = '#F5E6D3';
+        context.fillRect(panelX, panelY, panelWidth, panelHeight);
+
+        // 繪製內容區域的深色背景
+        const contentX = panelX + 20;
+        const contentY = panelY + 50;
+        const contentWidth = panelWidth - 40;
+        const contentHeight = panelHeight - 120;
+
+        context.fillStyle = 'rgba(40, 40, 35, 0.95)';
+        context.fillRect(contentX, contentY, contentWidth, contentHeight);
+
+        // 繪製外框（金色邊框）
+        context.strokeStyle = '#FFD700';
+        context.lineWidth = 3;
+        context.strokeRect(panelX, panelY, panelWidth, panelHeight);
+
+        // 繪製內容區域邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 2;
-        context.strokeRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
+        context.strokeRect(contentX, contentY, contentWidth, contentHeight);
     }
 
     /**
