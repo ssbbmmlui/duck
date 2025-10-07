@@ -147,26 +147,26 @@ class SelectionScene extends Scene {
         this.duckDisplay.highlightAreas = [
             {
                 name: '頭部',
-                x: this.duckDisplay.x + 10,
-                y: this.duckDisplay.y + 15,
-                width: 50,
-                height: 40,
+                x: this.duckDisplay.x + 5,
+                y: this.duckDisplay.y + 10,
+                width: 55,
+                height: 45,
                 info: '頭部應該小巧，眼睛明亮'
             },
             {
                 name: '胸部',
-                x: this.duckDisplay.x + 70,
-                y: this.duckDisplay.y + 35,
-                width: 70,
-                height: 45,
+                x: this.duckDisplay.x + 60,
+                y: this.duckDisplay.y + 50,
+                width: 65,
+                height: 40,
                 info: '胸部應該豐滿，肌肉結實'
             },
             {
                 name: '腹部',
-                x: this.duckDisplay.x + 80,
-                y: this.duckDisplay.y + 85,
-                width: 90,
-                height: 50,
+                x: this.duckDisplay.x + 55,
+                y: this.duckDisplay.y + 95,
+                width: 85,
+                height: 45,
                 info: '腹部不應過於肥大'
             }
         ];
