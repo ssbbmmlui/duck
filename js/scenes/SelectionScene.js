@@ -157,8 +157,8 @@ class SelectionScene extends Scene {
                 name: '胸部',
                 x: this.duckDisplay.x + 35,
                 y: this.duckDisplay.y + 60,
-                width: 30,
-                height: 20,
+                width: 40,
+                height: 23,
                 info: '胸部應該豐滿，肌肉結實'
             },
             {
