@@ -1112,18 +1112,14 @@ class RoastingScene extends Scene {
         
         const qualityScore = Math.round((duck.cookingProgress + duck.skinColor) / 2);
         
-        const completionLabel = uiManager.createLabel({
+        uiManager.createDismissibleMessage({
+            text: `烤製完成！\n品質評分: ${qualityScore}\n北京烤鴨已達到完美狀態！`,
             x: canvas.width / 2,
             y: canvas.height / 2 - 50,
-            text: `烤製完成！\n品質評分: ${qualityScore}\n北京烤鴨已達到完美狀態！`,
             fontSize: 18,
             color: '#32CD32',
-            align: 'center'
+            autoDismissTime: 5000
         });
-        
-        setTimeout(() => {
-            uiManager.removeUIElement(completionLabel);
-        }, 4000);
         
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');
@@ -1143,18 +1139,14 @@ class RoastingScene extends Scene {
         if (!skinColorGood) message += '• 皮色還需改善\n';
         message += '請繼續烤製或調整參數';
         
-        const incompleteLabel = uiManager.createLabel({
+        uiManager.createDismissibleMessage({
+            text: message,
             x: canvas.width / 2,
             y: canvas.height / 2 - 50,
-            text: message,
             fontSize: 16,
             color: '#FF8C00',
-            align: 'center'
+            autoDismissTime: 5000
         });
-        
-        setTimeout(() => {
-            uiManager.removeUIElement(incompleteLabel);
-        }, 4000);
     }
 
     /**
@@ -1164,18 +1156,14 @@ class RoastingScene extends Scene {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
         
-        const successLabel = uiManager.createLabel({
+        uiManager.createDismissibleMessage({
+            text: `${stepName}完成！\n獲得分數: ${score}\n烤製過程繼續進行`,
             x: canvas.width / 2,
             y: canvas.height / 2 - 50,
-            text: `${stepName}完成！\n獲得分數: ${score}\n烤製過程繼續進行`,
             fontSize: 18,
             color: '#32CD32',
-            align: 'center'
+            autoDismissTime: 5000
         });
-        
-        setTimeout(() => {
-            uiManager.removeUIElement(successLabel);
-        }, 3000);
         
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');

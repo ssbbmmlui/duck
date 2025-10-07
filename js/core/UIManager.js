@@ -832,13 +832,74 @@ class UIUtils {
     static measureChineseText(context, text, fontSize) {
         const oldFont = context.font;
         context.font = `${fontSize}px Microsoft JhengHei, PingFang TC, sans-serif`;
-        
+
         const metrics = context.measureText(text);
         const width = metrics.width;
         const height = fontSize * 1.2;
-        
+
         context.font = oldFont;
         return { width, height };
+    }
+
+    /**
+     * 創建可關閉的消息框（帶有繼續按鈕）
+     */
+    createDismissibleMessage(config = {}) {
+        const {
+            text = '',
+            x = this.canvas ? this.canvas.width / 2 : 400,
+            y = this.canvas ? this.canvas.height / 2 - 50 : 250,
+            fontSize = 18,
+            color = '#32CD32',
+            buttonText = '繼續',
+            onDismiss = null,
+            autoDismissTime = 0
+        } = config;
+
+        const messageGroup = {
+            label: null,
+            button: null,
+            autoDismissTimer: null
+        };
+
+        const dismissMessage = () => {
+            if (messageGroup.autoDismissTimer) {
+                clearTimeout(messageGroup.autoDismissTimer);
+            }
+            if (messageGroup.label) {
+                this.removeUIElement(messageGroup.label);
+            }
+            if (messageGroup.button) {
+                this.removeUIElement(messageGroup.button);
+            }
+            if (onDismiss) {
+                onDismiss();
+            }
+        };
+
+        messageGroup.label = this.createLabel({
+            x: x,
+            y: y,
+            text: text,
+            fontSize: fontSize,
+            color: color,
+            align: 'center'
+        });
+
+        messageGroup.button = this.createButton({
+            x: x - 40,
+            y: y + 60,
+            width: 80,
+            height: 35,
+            text: buttonText,
+            onClick: dismissMessage
+        });
+
+        if (autoDismissTime > 0) {
+            messageGroup.autoDismissTimer = setTimeout(dismissMessage, autoDismissTime);
+        }
+
+        return messageGroup;
     }
 }
 // 匯出到全域作用域

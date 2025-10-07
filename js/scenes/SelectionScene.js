@@ -510,46 +510,38 @@ class SelectionScene extends Scene {
             if (gameName === '鴨子品質檢查') {
                 // 品質檢查完成
                 this.gameEngine.progressManager.completeStep('duck_quality_check');
-                
+
                 // 更新按鈕，準備重量測量
                 this.nextButton.setText('重量測量');
                 this.nextButton.onClick = () => this.startWeightGame();
-                
-                // 顯示成功消息
-                const successLabel = uiManager.createLabel({
+
+                // 顯示可關閉的成功消息
+                uiManager.createDismissibleMessage({
+                    text: `品質檢查完成！\n獲得分數: ${stats.score}`,
                     x: canvas.width / 2,
                     y: canvas.height / 2 - 50,
-                    text: `品質檢查完成！\n獲得分數: ${stats.score}`,
                     fontSize: 18,
                     color: '#32CD32',
-                    align: 'center'
+                    autoDismissTime: 5000
                 });
-                
-                setTimeout(() => {
-                    uiManager.removeUIElement(successLabel);
-                }, 3000);
                 
             } else if (gameName === '重量測量') {
                 // 重量測量完成
                 this.gameEngine.progressManager.completeStep('duck_weight_measurement');
-                
+
                 // 選材階段完成，準備進入下一個場景
                 this.nextButton.setText('進入處理階段');
                 this.nextButton.onClick = () => this.proceedToNextScene();
-                
-                // 顯示成功消息
-                const successLabel = uiManager.createLabel({
+
+                // 顯示可關閉的成功消息
+                uiManager.createDismissibleMessage({
+                    text: `重量測量完成！\n獲得分數: ${stats.score}\n\n選材階段全部完成！`,
                     x: canvas.width / 2,
                     y: canvas.height / 2 - 50,
-                    text: `重量測量完成！\n獲得分數: ${stats.score}\n\n選材階段全部完成！`,
                     fontSize: 18,
                     color: '#32CD32',
-                    align: 'center'
+                    autoDismissTime: 5000
                 });
-                
-                setTimeout(() => {
-                    uiManager.removeUIElement(successLabel);
-                }, 4000);
                 
                 // 標記選材階段完成
                 this.gameEngine.updateGameState({

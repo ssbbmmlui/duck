@@ -559,20 +559,16 @@ class PreparationScene extends Scene {
     showSuccessMessage(stepName, score) {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
-        
-        const successLabel = uiManager.createLabel({
+
+        uiManager.createDismissibleMessage({
+            text: `${stepName}完成！\n獲得分數: ${score}\n製胚技藝精進！`,
             x: canvas.width / 2,
             y: canvas.height / 2 - 50,
-            text: `${stepName}完成！\n獲得分數: ${score}\n製胚技藝精進！`,
             fontSize: 18,
             color: '#32CD32',
-            align: 'center'
+            autoDismissTime: 5000
         });
-        
-        setTimeout(() => {
-            uiManager.removeUIElement(successLabel);
-        }, 3000);
-        
+
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');
         }
@@ -584,19 +580,15 @@ class PreparationScene extends Scene {
     showRetryMessage() {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
-        
-        const retryLabel = uiManager.createLabel({
+
+        uiManager.createDismissibleMessage({
+            text: '製胚需要精確技巧，請再試一次',
             x: canvas.width / 2,
             y: canvas.height / 2 - 50,
-            text: '製胚需要精確技巧，請再試一次',
             fontSize: 18,
             color: '#FF6B6B',
-            align: 'center'
+            autoDismissTime: 5000
         });
-        
-        setTimeout(() => {
-            uiManager.removeUIElement(retryLabel);
-        }, 3000);
     }
 
     /**
