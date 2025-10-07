@@ -16,7 +16,7 @@ class DuckQualityGame extends MiniGame {
             {
                 id: 'head',
                 name: '頭部檢查',
-                x: 500,
+                x: 485,
                 y: 130,
                 radius: 30,
                 checked: false,
@@ -27,8 +27,8 @@ class DuckQualityGame extends MiniGame {
             {
                 id: 'chest',
                 name: '胸部檢查',
-                x: 490,
-                y: 160,
+                x: 475,
+                y: 150,
                 radius: 35,
                 checked: false,
                 quality: 'excellent',
@@ -38,7 +38,7 @@ class DuckQualityGame extends MiniGame {
             {
                 id: 'abdomen',
                 name: '腹部檢查',
-                x: 550,
+                x: 490,
                 y: 190,
                 radius: 35,
                 checked: false,
@@ -49,8 +49,8 @@ class DuckQualityGame extends MiniGame {
             {
                 id: 'skin',
                 name: '皮膚檢查',
-                x: 560,
-                y: 160,
+                x: 510,
+                y: 180,
                 radius: 45,
                 checked: false,
                 quality: 'excellent',
@@ -60,8 +60,8 @@ class DuckQualityGame extends MiniGame {
             {
                 id: 'weight',
                 name: '重量評估',
-                x: 550,
-                y: 180,
+                x: 500,
+                y: 200,
                 radius: 32,
                 checked: false,
                 quality: 'good',
