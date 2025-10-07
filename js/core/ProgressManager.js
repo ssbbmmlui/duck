@@ -50,13 +50,16 @@ class ProgressManager {
     }
 
     /**
-     * 保存進度到LocalStorage
+     * 保存進度到LocalStorage (已禁用)
      */
     saveProgress(gameState = null) {
+        console.log('進度保存已禁用 - 每次重新整理將重新開始遊戲');
+        return true;
+
         try {
             const progressToSave = gameState || this.currentProgress;
             progressToSave.statistics.lastPlayDate = new Date().toISOString();
-            
+
             // 檢查LocalStorage可用性
             if (!this.isStorageAvailable()) {
                 console.warn('LocalStorage不可用，進度無法保存');
@@ -99,15 +102,19 @@ class ProgressManager {
     }
 
     /**
-     * 從LocalStorage載入進度
+     * 從LocalStorage載入進度 (已禁用)
      */
     loadProgress() {
+        console.log('進度載入已禁用 - 使用預設進度');
+        this.currentProgress = this.getDefaultProgress();
+        return;
+
         try {
             const savedProgress = localStorage.getItem(this.storageKey);
-            
+
             if (savedProgress) {
                 const parsedProgress = JSON.parse(savedProgress);
-                
+
                 // 合併預設值以確保新增的屬性存在
                 this.currentProgress = {
                     ...this.getDefaultProgress(),
