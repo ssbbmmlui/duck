@@ -6,7 +6,7 @@ class FeatherRemovalGame extends MiniGame {
     constructor(config = {}) {
         super({
             name: '褪毛遊戲',
-            timeLimit: 60000, // 60秒時間限制
+            timeLimit: 0, // 無時間限制，改為計時模式
             successThreshold: 1.0, // 需要移除所有羽毛
             ...config
         });
@@ -43,19 +43,26 @@ class FeatherRemovalGame extends MiniGame {
         // 工具狀態
         this.currentTool = 'hand'; // hand, hot_water
         this.hotWaterUsed = false;
+
+        // 遊戲階段
+        this.gamePhase = 'water'; // water (未用熱水), plucking (拔毛階段)
+
+        // 圖像引用
+        this.pluckingDuckImage = null;
     }
 
     /**
      * 設置遊戲
      */
     setupGame() {
-        this.createFeathers();
         this.loadAssets();
-        
+
         // 重置狀態
         this.removedFeathers = 0;
         this.hotWaterUsed = false;
         this.particles = [];
+        this.gamePhase = 'water';
+        this.feathers = []; // 初始不創建羽毛
         this.updateProgress(0);
     }
 
@@ -66,6 +73,7 @@ class FeatherRemovalGame extends MiniGame {
         if (this.gameEngine && this.gameEngine.assetManager) {
             const assetManager = this.gameEngine.assetManager;
             this.duckImage = assetManager.getAsset('processing_duck');
+            this.pluckingDuckImage = assetManager.getAsset('feather_plucking_duck');
         }
     }
 
@@ -106,10 +114,10 @@ class FeatherRemovalGame extends MiniGame {
      * 獲取遊戲說明
      */
     getInstructions() {
-        if (!this.hotWaterUsed) {
-            return '先用熱水燙毛軟化羽毛，然後點擊拖拽移除羽毛';
+        if (this.gamePhase === 'water') {
+            return '點擊鴨子使用熱水軟化羽毛（僅能使用一次）';
         }
-        return '點擊並拖拽移除羽毛，注意順著羽毛生長方向';
+        return '點擊並拖拽移除羽毛 - 越快完成分數越高！';
     }
 
     /**
@@ -185,18 +193,25 @@ class FeatherRemovalGame extends MiniGame {
     updateGame(deltaTime) {
         // 更新粒子效果
         this.updateParticles(deltaTime);
-        
+
         // 更新熱水效果
         this.updateHotWaterEffect(deltaTime);
-        
-        // 更新羽毛計數器
+
+        // 只在拔毛階段顯示羽毛計數器
         if (this.featherCounter) {
-            this.featherCounter.setText(`剩餘羽毛: ${this.totalFeathers - this.removedFeathers}`);
+            if (this.gamePhase === 'plucking') {
+                this.featherCounter.setText(`剩餘羽毛: ${this.totalFeathers - this.removedFeathers}`);
+                this.featherCounter.setVisible(true);
+            } else {
+                this.featherCounter.setVisible(false);
+            }
         }
-        
+
         // 更新進度
-        const progress = this.removedFeathers / this.totalFeathers;
-        this.updateProgress(progress);
+        if (this.gamePhase === 'plucking') {
+            const progress = this.removedFeathers / this.totalFeathers;
+            this.updateProgress(progress);
+        }
     }
 
     /**
@@ -223,38 +238,31 @@ class FeatherRemovalGame extends MiniGame {
     updateHotWaterEffect(deltaTime) {
         if (this.hotWaterEffect.active) {
             this.hotWaterEffect.radius += deltaTime * 0.3;
-            
+
             if (this.hotWaterEffect.radius >= this.hotWaterEffect.maxRadius) {
                 this.hotWaterEffect.active = false;
                 this.hotWaterEffect.radius = 0;
-                
-                // 軟化範圍內的羽毛
-                this.softenFeathersInRange(
-                    this.hotWaterEffect.x,
-                    this.hotWaterEffect.y,
-                    this.hotWaterEffect.maxRadius
-                );
+
+                // 進入拔毛階段
+                this.enterPluckingPhase();
             }
         }
     }
 
     /**
-     * 軟化範圍內的羽毛
+     * 進入拔毛階段
      */
-    softenFeathersInRange(x, y, radius) {
+    enterPluckingPhase() {
+        console.log('進入拔毛階段');
+        this.gamePhase = 'plucking';
+
+        // 現在創建羽毛並立即顯示
+        this.createFeathers();
+
+        // 所有羽毛都已軟化
         this.feathers.forEach(feather => {
-            if (!feather.removed) {
-                const distance = Math.sqrt(
-                    Math.pow(feather.x - x, 2) + Math.pow(feather.y - y, 2)
-                );
-
-                if (distance <= radius) {
-                    feather.softened = true;
-                }
-            }
+            feather.softened = true;
         });
-
-        console.log('羽毛已軟化，現在可以用手拔除');
 
         // 禁用熱水按鈕
         if (this.hotWaterButton) {
@@ -262,8 +270,11 @@ class FeatherRemovalGame extends MiniGame {
             this.hotWaterButton.setText('已使用');
         }
 
-        // 自動切換到手工工具
+        // 自動切換到手工工具並更新說明
         this.currentTool = 'hand';
+        if (this.instructions) {
+            this.instructions.setText(this.getInstructions());
+        }
     }
 
     /**
@@ -292,21 +303,27 @@ class FeatherRemovalGame extends MiniGame {
     renderDuck(context) {
         const duck = this.duckPosition;
 
-        if (this.duckImage && this.duckImage.width) {
-            context.drawImage(this.duckImage, duck.x, duck.y, duck.width, duck.height);
+        // 根據階段選擇圖像
+        let imageToShow = this.duckImage;
+        if (this.gamePhase === 'plucking' && this.pluckingDuckImage && this.pluckingDuckImage.width) {
+            imageToShow = this.pluckingDuckImage;
+        }
+
+        if (imageToShow && imageToShow.width) {
+            context.drawImage(imageToShow, duck.x, duck.y, duck.width, duck.height);
         } else {
             // 繪製佔位符
             context.fillStyle = '#F5DEB3';
             context.fillRect(duck.x, duck.y, duck.width, duck.height);
-            
+
             context.strokeStyle = '#8B4513';
             context.lineWidth = 2;
             context.strokeRect(duck.x, duck.y, duck.width, duck.height);
-            
+
             context.fillStyle = '#654321';
             context.font = '16px Microsoft JhengHei';
             context.textAlign = 'center';
-            context.fillText('鴨子', duck.x + duck.width / 2, duck.y + duck.height / 2);
+            context.fillText(this.gamePhase === 'plucking' ? '拔毛中' : '準備燙毛', duck.x + duck.width / 2, duck.y + duck.height / 2);
         }
     }
 
@@ -314,34 +331,27 @@ class FeatherRemovalGame extends MiniGame {
      * 渲染羽毛
      */
     renderFeathers(context) {
+        // 只在拔毛階段顯示羽毛
+        if (this.gamePhase !== 'plucking') return;
+
         this.feathers.forEach(feather => {
             if (feather.removed) return;
-            
+
             context.save();
             context.translate(feather.x, feather.y);
             context.rotate(feather.angle);
-            
-            // 根據狀態設置顏色
-            if (feather.softened) {
-                context.fillStyle = feather.color;
-                context.strokeStyle = '#32CD32'; // 綠色邊框表示已軟化
-                context.lineWidth = 2;
-            } else if (feather.type === 'stubborn') {
-                context.fillStyle = '#D3D3D3'; // 頑固羽毛顏色較深
-                context.strokeStyle = '#FF6B6B'; // 紅色邊框表示需要熱水
-                context.lineWidth = 1;
-            } else {
-                context.fillStyle = feather.color;
-                context.strokeStyle = '#CCCCCC';
-                context.lineWidth = 1;
-            }
-            
+
+            // 所有羽毛都已軟化，使用統一樣式
+            context.fillStyle = feather.color;
+            context.strokeStyle = '#666666';
+            context.lineWidth = 1.5;
+
             // 繪製羽毛形狀
             context.beginPath();
             context.ellipse(0, 0, feather.size / 2, feather.size, 0, 0, Math.PI * 2);
             context.fill();
             context.stroke();
-            
+
             // 繪製羽毛紋理
             context.strokeStyle = 'rgba(0, 0, 0, 0.3)';
             context.lineWidth = 1;
@@ -349,7 +359,7 @@ class FeatherRemovalGame extends MiniGame {
             context.moveTo(-feather.size / 4, -feather.size / 2);
             context.lineTo(feather.size / 4, feather.size / 2);
             context.stroke();
-            
+
             context.restore();
         });
     }
@@ -407,13 +417,10 @@ class FeatherRemovalGame extends MiniGame {
         context.font = '14px Microsoft JhengHei';
         context.textAlign = 'left';
 
-        if (this.currentTool === 'hot_water' && !this.hotWaterUsed) {
+        if (this.gamePhase === 'water') {
             context.fillText('💧 熱水工具已選擇 - 點擊鴨子進行燙毛（僅能使用一次）', this.gameArea.x + 10, hintY);
-        } else if (this.currentTool === 'hot_water' && this.hotWaterUsed) {
-            context.fillStyle = '#e53e3e';
-            context.fillText('❌ 熱水已使用完畢 - 請切換到手工拔毛', this.gameArea.x + 10, hintY);
         } else {
-            context.fillText('✋ 手工工具已選擇 - 拖拽移除軟化的羽毛', this.gameArea.x + 10, hintY);
+            context.fillText('✋ 拖拽移除羽毛 - 完成時間越短，得分越高！', this.gameArea.x + 10, hintY);
         }
     }
 
@@ -444,12 +451,12 @@ class FeatherRemovalGame extends MiniGame {
      * 處理點擊
      */
     handleClick(x, y) {
-        if (this.currentTool === 'hot_water') {
+        if (this.gamePhase === 'water') {
             return this.useHotWater(x, y);
-        } else if (this.currentTool === 'hand') {
+        } else if (this.gamePhase === 'plucking') {
             return this.startFeatherRemoval(x, y);
         }
-        
+
         return false;
     }
 
@@ -486,21 +493,15 @@ class FeatherRemovalGame extends MiniGame {
     startFeatherRemoval(x, y) {
         // 查找點擊的羽毛
         const clickedFeather = this.findFeatherAt(x, y);
-        
+
         if (clickedFeather && !clickedFeather.removed) {
-            if (!clickedFeather.softened && clickedFeather.type === 'stubborn') {
-                // 頑固羽毛需要先軟化
-                this.showMessage('這根羽毛太頑固，需要先用熱水軟化！');
-                return false;
-            }
-            
             this.isDragging = true;
             this.dragStartPos = { x, y };
             this.currentFeather = clickedFeather;
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -627,21 +628,28 @@ class FeatherRemovalGame extends MiniGame {
      * 計算準確度獎勵
      */
     calculateAccuracyBonus() {
-        // 基於是否正確使用熱水和移除效率
-        let bonus = 0;
-        
-        if (this.hotWaterUsed) {
-            bonus += 30; // 正確使用熱水獎勵
-        }
-        
-        // 基於移除速度的獎勵
+        // 基於完成時間計算獎勵 - 越快越好
         const gameTime = this.stats.endTime - this.stats.startTime;
-        if (gameTime < 30000) { // 30秒內完成
-            bonus += 20;
-        } else if (gameTime < 45000) { // 45秒內完成
-            bonus += 10;
+        const seconds = gameTime / 1000;
+
+        // 基礎分數100分
+        let bonus = 100;
+
+        // 根據時間扣分：每秒扣1分
+        bonus -= Math.floor(seconds);
+
+        // 最低保底20分
+        bonus = Math.max(20, bonus);
+
+        // 速度獎勵
+        if (seconds < 20) {
+            bonus += 30; // 20秒內完成額外獎勵
+        } else if (seconds < 30) {
+            bonus += 20; // 30秒內完成額外獎勵
+        } else if (seconds < 45) {
+            bonus += 10; // 45秒內完成額外獎勵
         }
-        
+
         return bonus;
     }
 }

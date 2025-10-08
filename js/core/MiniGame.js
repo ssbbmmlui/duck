@@ -189,11 +189,11 @@ class MiniGame {
      */
     renderGameArea(context) {
         const area = this.gameArea;
-        
-        // 繪製遊戲區域背景
-        context.fillStyle = 'rgba(255, 255, 255, 0.9)';
+
+        // 繪製遊戲區域背景（完全不透明以遮擋背景）
+        context.fillStyle = '#FFFFFF';
         context.fillRect(area.x, area.y, area.width, area.height);
-        
+
         // 繪製邊框
         context.strokeStyle = '#8B4513';
         context.lineWidth = 2;
@@ -223,17 +223,29 @@ class MiniGame {
             );
         }
         
-        // 渲染時間（如果有限制）
+        // 渲染時間
+        const elapsed = Date.now() - this.stats.startTime;
         if (this.config.timeLimit > 0) {
-            const elapsed = Date.now() - this.stats.startTime;
+            // 有時間限制：顯示剩餘時間
             const remaining = Math.max(0, this.config.timeLimit - elapsed);
             const seconds = Math.ceil(remaining / 1000);
-            
+
             context.fillStyle = seconds <= 10 ? '#FF6B6B' : '#654321';
             context.font = '14px Microsoft JhengHei';
             context.textAlign = 'left';
             context.fillText(
                 `剩餘時間: ${seconds}秒`,
+                this.gameArea.x + 10,
+                this.gameArea.y + 20
+            );
+        } else {
+            // 無時間限制：顯示經過時間
+            const seconds = Math.floor(elapsed / 1000);
+            context.fillStyle = '#654321';
+            context.font = '14px Microsoft JhengHei';
+            context.textAlign = 'left';
+            context.fillText(
+                `經過時間: ${seconds}秒`,
                 this.gameArea.x + 10,
                 this.gameArea.y + 20
             );

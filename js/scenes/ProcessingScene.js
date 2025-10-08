@@ -117,6 +117,7 @@ class ProcessingScene extends Scene {
         await assetManager.loadImage('assets/images/backgrounds/processing_bg.png', 'background_processing');
         await assetManager.loadImage('assets/images/duck/raw_duck.png', 'duck_raw');
         await assetManager.loadImage('assets/images/duck/processing_duck.png', 'processing_duck');
+        await assetManager.loadImage('assets/images/duck/feather_plucking_duck.png', 'feather_plucking_duck');
         await assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers');
         await assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened');
         await assetManager.loadImage('assets/images/tools/feather_pluck.png', 'feather_pluck_tool');
