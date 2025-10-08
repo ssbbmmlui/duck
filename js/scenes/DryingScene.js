@@ -1351,7 +1351,15 @@ class DryingScene extends Scene {
         if (this.instructionLabel) this.instructionLabel.setVisible(true);
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
         if (this.nextButton) this.nextButton.setVisible(true);
-        if (this.educationButton) this.educationButton.setVisible(true);
+
+        // 只在當前步驟有教育內容時顯示教育按鈕
+        if (this.educationButton && this.currentStepIndex < this.dryingSteps.length) {
+            const currentStep = this.dryingSteps[this.currentStepIndex];
+            if (currentStep && currentStep.educationContent) {
+                this.educationButton.setVisible(true);
+            }
+        }
+
         if (this.backButton) this.backButton.setVisible(true);
         if (this.timeDisplayLabel) this.timeDisplayLabel.setVisible(true);
         if (this.timeSpeedButton) this.timeSpeedButton.setVisible(true);

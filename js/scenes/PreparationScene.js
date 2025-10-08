@@ -10,6 +10,7 @@ class PreparationScene extends Scene {
         this.titleLabel = null;
         this.instructionLabel = null;
         this.educationPanel = null;
+        this.educationButton = null;
         this.nextButton = null;
         this.backButton = null;
         this.stepIndicator = null;
@@ -242,8 +243,8 @@ class PreparationScene extends Scene {
      */
     createEducationButton() {
         const uiManager = this.gameEngine.uiManager;
-        
-        const educationButton = uiManager.createButton({
+
+        this.educationButton = uiManager.createButton({
             x: 50,
             y: 220,
             width: 130,
@@ -251,8 +252,8 @@ class PreparationScene extends Scene {
             text: '學習製胚技術',
             onClick: () => this.showCurrentStepEducation()
         });
-        
-        this.addUIElement(educationButton);
+
+        this.addUIElement(this.educationButton);
     }
 
     /**
@@ -893,7 +894,15 @@ class PreparationScene extends Scene {
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
         if (this.nextButton) this.nextButton.setVisible(true);
         if (this.backButton) this.backButton.setVisible(true);
-        if (this.educationButton) this.educationButton.setVisible(true);
+
+        // 只在當前步驟有教育內容時顯示教育按鈕
+        if (this.educationButton && this.currentStepIndex < this.preparationSteps.length) {
+            const currentStep = this.preparationSteps[this.currentStepIndex];
+            if (currentStep && currentStep.educationContent) {
+                this.educationButton.setVisible(true);
+            }
+        }
+
         if (this.inflationProgressLabel) this.inflationProgressLabel.setVisible(true);
         if (this.coloringProgressLabel) this.coloringProgressLabel.setVisible(true);
     }

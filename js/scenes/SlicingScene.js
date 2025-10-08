@@ -703,7 +703,17 @@ class SlicingScene extends Scene {
     showSceneUI() {
         this.uiElements.forEach(element => {
             if (element.setVisible) {
-                element.setVisible(true);
+                // 只在當前步驟有教育內容時顯示教育按鈕
+                if (element === this.educationButton) {
+                    if (this.currentStepIndex < this.slicingSteps.length) {
+                        const currentStep = this.slicingSteps[this.currentStepIndex];
+                        if (currentStep && currentStep.educationContent) {
+                            element.setVisible(true);
+                        }
+                    }
+                } else {
+                    element.setVisible(true);
+                }
             }
         });
     }
