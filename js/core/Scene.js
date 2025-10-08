@@ -8,14 +8,15 @@ class Scene {
         this.gameEngine = gameEngine;
         this.isActive = false;
         this.isLoaded = false;
-        
+        this.isLoading = false;
+
         // 場景資源
         this.assets = [];
         this.backgroundImage = null;
-        
+
         // UI元素
         this.uiElements = [];
-        
+
         // 迷你遊戲
         this.miniGames = [];
         this.currentMiniGame = null;
@@ -26,12 +27,14 @@ class Scene {
      */
     async enter() {
         this.isActive = true;
-        
+
         if (!this.isLoaded) {
+            this.isLoading = true;
             await this.loadSceneAssets();
             this.isLoaded = true;
+            this.isLoading = false;
         }
-        
+
         this.setupScene();
         console.log(`進入場景: ${this.name}`);
     }
@@ -85,6 +88,12 @@ class Scene {
     render(context) {
         if (!this.isActive) return;
 
+        // 如果正在載入，顯示載入畫面
+        if (this.isLoading) {
+            this.renderLoadingScreen(context);
+            return;
+        }
+
         // 渲染背景
         if (this.backgroundImage) {
             context.drawImage(this.backgroundImage, 0, 0, context.canvas.width, context.canvas.height);
@@ -104,6 +113,44 @@ class Scene {
                 element.render(context);
             }
         });
+    }
+
+    /**
+     * 渲染載入畫面
+     */
+    renderLoadingScreen(context) {
+        const canvas = context.canvas;
+
+        // 填充背景
+        const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#2c3e50');
+        gradient.addColorStop(1, '#34495e');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 獲取遊戲標誌
+        const logo = this.gameEngine.assetManager.getAsset('logo');
+
+        if (logo && logo.width) {
+            // 渲染標誌（1:1比例）
+            const logoSize = 150;
+            const logoX = (canvas.width - logoSize) / 2;
+            const logoY = canvas.height / 2 - logoSize / 2 - 40;
+            context.drawImage(logo, logoX, logoY, logoSize, logoSize);
+        }
+
+        // 渲染 "Loading" 文字
+        context.fillStyle = '#FFFFFF';
+        context.font = 'bold 24px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('Loading', canvas.width / 2, canvas.height / 2 + 80);
+
+        // 渲染載入動畫點
+        const dots = '.'.repeat((Math.floor(Date.now() / 500) % 4));
+        context.fillStyle = '#FFFFFF';
+        context.font = 'bold 24px Microsoft JhengHei, sans-serif';
+        context.fillText(dots, canvas.width / 2 + 80, canvas.height / 2 + 80);
     }
 
     /**
