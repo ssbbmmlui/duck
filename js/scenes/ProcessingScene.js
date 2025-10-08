@@ -251,52 +251,18 @@ class ProcessingScene extends Scene {
      */
     showEducationPanel(content) {
         this.showingEducation = true;
+        this.educationContent = content;
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
 
         // 隱藏其他UI元素
-        if (this.titleLabel) this.titleLabel.setVisible(false);
-        if (this.instructionLabel) this.instructionLabel.setVisible(false);
-        if (this.educationButton) this.educationButton.setVisible(false);
-        if (this.nextButton) this.nextButton.setVisible(false);
-        if (this.backButton) this.backButton.setVisible(false);
-        if (this.stepIndicator) this.stepIndicator.setVisible(false);
-
-        // 分割內容為兩列
-        const lines = content.content.split('\n');
-        const midPoint = Math.ceil(lines.length / 2);
-        const leftColumn = lines.slice(0, midPoint).join('\n');
-        const rightColumn = lines.slice(midPoint).join('\n');
+        this.hideSceneUI();
 
         // 創建教育面板
         this.educationPanel = {
-            title: uiManager.createLabel({
-                x: canvas.width / 2,
-                y: 130,
-                text: content.title,
-                fontSize: 20,
-                color: '#FFD700',
-                align: 'center'
-            }),
-            leftContent: uiManager.createLabel({
-                x: 70,
-                y: 170,
-                text: leftColumn,
-                fontSize: 14,
-                color: '#FFFFFF',
-                align: 'left'
-            }),
-            rightContent: uiManager.createLabel({
-                x: canvas.width / 2 + 20,
-                y: 170,
-                text: rightColumn,
-                fontSize: 14,
-                color: '#FFFFFF',
-                align: 'left'
-            }),
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
-                y: canvas.height - 110,
+                y: canvas.height - 90,
                 width: 80,
                 height: 35,
                 text: '關閉',
@@ -318,6 +284,7 @@ class ProcessingScene extends Scene {
         if (!this.showingEducation || !this.educationPanel) return;
 
         this.showingEducation = false;
+        this.educationContent = null;
         const uiManager = this.gameEngine.uiManager;
 
         // 移除教育面板元素
@@ -328,13 +295,8 @@ class ProcessingScene extends Scene {
 
         this.educationPanel = null;
 
-        // 顯示其他UI元素
-        if (this.titleLabel) this.titleLabel.setVisible(true);
-        if (this.instructionLabel) this.instructionLabel.setVisible(true);
-        if (this.educationButton) this.educationButton.setVisible(true);
-        if (this.nextButton) this.nextButton.setVisible(true);
-        if (this.backButton) this.backButton.setVisible(true);
-        if (this.stepIndicator) this.stepIndicator.setVisible(true);
+        // 顯示場景UI
+        this.showSceneUI();
     }
 
     /**
@@ -681,26 +643,98 @@ class ProcessingScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製全幕遮罩（更深）
-        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        if (!this.educationContent) return;
 
-        // 繪製不透明的面板背景
-        context.fillStyle = 'rgba(40, 30, 20, 0.98)';
-        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 170);
+        const canvas = context.canvas;
+
+        // 繪製全螢幕半透明背景遮罩
+        context.fillStyle = 'rgba(0, 0, 0, 0.9)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 繪製教育面板背景
+        const panelX = 60;
+        const panelY = 80;
+        const panelWidth = canvas.width - 120;
+        const panelHeight = canvas.height - 160;
+
+        context.fillStyle = 'rgba(139, 69, 19, 0.98)';
+        context.fillRect(panelX, panelY, panelWidth, panelHeight);
 
         // 繪製邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 3;
-        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 170);
+        context.strokeRect(panelX, panelY, panelWidth, panelHeight);
 
-        // 繪製中間分割線
-        context.strokeStyle = 'rgba(255, 215, 0, 0.3)';
-        context.lineWidth = 1;
+        // 繪製標題
+        context.fillStyle = '#FFD700';
+        context.font = 'bold 22px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'center';
+        context.fillText(this.educationContent.title, canvas.width / 2, panelY + 40);
+
+        // 繪製分隔線
+        context.strokeStyle = '#FFD700';
+        context.lineWidth = 2;
         context.beginPath();
-        context.moveTo(context.canvas.width / 2, 160);
-        context.lineTo(context.canvas.width / 2, context.canvas.height - 130);
+        context.moveTo(panelX + 40, panelY + 60);
+        context.lineTo(panelX + panelWidth - 40, panelY + 60);
         context.stroke();
+
+        // 分割內容為兩欄
+        const contentLines = this.educationContent.content.split('\n');
+        const midPoint = Math.ceil(contentLines.length / 2);
+        const leftColumnLines = contentLines.slice(0, midPoint);
+        const rightColumnLines = contentLines.slice(midPoint);
+
+        // 設置文字樣式
+        context.fillStyle = '#FFFFFF';
+        context.font = '15px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'left';
+
+        const columnWidth = (panelWidth - 100) / 2;
+        const leftColumnX = panelX + 30;
+        const rightColumnX = panelX + panelWidth / 2 + 20;
+        const startY = panelY + 90;
+        const lineHeight = 24;
+
+        // 繪製左欄
+        leftColumnLines.forEach((line, index) => {
+            const y = startY + index * lineHeight;
+            if (y < panelY + panelHeight - 80) {
+                this.wrapText(context, line, leftColumnX, y, columnWidth, lineHeight);
+            }
+        });
+
+        // 繪製右欄
+        rightColumnLines.forEach((line, index) => {
+            const y = startY + index * lineHeight;
+            if (y < panelY + panelHeight - 80) {
+                this.wrapText(context, line, rightColumnX, y, columnWidth, lineHeight);
+            }
+        });
+    }
+
+    /**
+     * 包裝文字以適應寬度
+     */
+    wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split('');
+        let line = '';
+        let offsetY = 0;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i];
+            const metrics = context.measureText(testLine);
+            const testWidth = metrics.width;
+
+            if (testWidth > maxWidth && i > 0) {
+                context.fillText(line, x, y + offsetY);
+                line = words[i];
+                offsetY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        context.fillText(line, x, y + offsetY);
     }
 
     /**

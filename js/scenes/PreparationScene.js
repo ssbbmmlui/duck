@@ -301,30 +301,15 @@ class PreparationScene extends Scene {
      */
     showEducationPanel(content) {
         this.showingEducation = true;
+        this.educationContent = content;
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
 
         // 創建教育面板
         this.educationPanel = {
-            title: uiManager.createLabel({
-                x: canvas.width / 2,
-                y: 120,
-                text: content.title,
-                fontSize: 20,
-                color: '#FFD700',
-                align: 'center'
-            }),
-            content: uiManager.createLabel({
-                x: 80,
-                y: 160,
-                text: content.content,
-                fontSize: 14,
-                color: '#FFFFFF',
-                align: 'left'
-            }),
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
-                y: canvas.height - 120,
+                y: canvas.height - 90,
                 width: 80,
                 height: 35,
                 text: '關閉',
@@ -346,6 +331,7 @@ class PreparationScene extends Scene {
         if (!this.showingEducation || !this.educationPanel) return;
 
         this.showingEducation = false;
+        this.educationContent = null;
         const uiManager = this.gameEngine.uiManager;
 
         // 移除教育面板元素
@@ -841,34 +827,98 @@ class PreparationScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
+        if (!this.educationContent) return;
+
+        const canvas = context.canvas;
+
+        // 繪製全螢幕半透明背景遮罩
+        context.fillStyle = 'rgba(0, 0, 0, 0.9)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 繪製教育面板背景
+        const panelX = 60;
+        const panelY = 80;
+        const panelWidth = canvas.width - 120;
+        const panelHeight = canvas.height - 160;
+
+        context.fillStyle = 'rgba(139, 69, 19, 0.98)';
+        context.fillRect(panelX, panelY, panelWidth, panelHeight);
+
         // 繪製邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 3;
-        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
-        // 繪製裝飾角落
-        const cornerSize = 20;
+        context.strokeRect(panelX, panelY, panelWidth, panelHeight);
+
+        // 繪製標題
         context.fillStyle = '#FFD700';
-        
-        // 左上角
-        context.fillRect(40, 110, cornerSize, 3);
-        context.fillRect(40, 110, 3, cornerSize);
-        
-        // 右上角
-        context.fillRect(context.canvas.width - 60 - cornerSize, 110, cornerSize, 3);
-        context.fillRect(context.canvas.width - 43, 110, 3, cornerSize);
-        
-        // 左下角
-        context.fillRect(40, context.canvas.height - 73, cornerSize, 3);
-        context.fillRect(40, context.canvas.height - 90, 3, cornerSize);
-        
-        // 右下角
-        context.fillRect(context.canvas.width - 60 - cornerSize, context.canvas.height - 73, cornerSize, 3);
-        context.fillRect(context.canvas.width - 43, context.canvas.height - 90, 3, cornerSize);
+        context.font = 'bold 22px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'center';
+        context.fillText(this.educationContent.title, canvas.width / 2, panelY + 40);
+
+        // 繪製分隔線
+        context.strokeStyle = '#FFD700';
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(panelX + 40, panelY + 60);
+        context.lineTo(panelX + panelWidth - 40, panelY + 60);
+        context.stroke();
+
+        // 分割內容為兩欄
+        const contentLines = this.educationContent.content.split('\n');
+        const midPoint = Math.ceil(contentLines.length / 2);
+        const leftColumnLines = contentLines.slice(0, midPoint);
+        const rightColumnLines = contentLines.slice(midPoint);
+
+        // 設置文字樣式
+        context.fillStyle = '#FFFFFF';
+        context.font = '15px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'left';
+
+        const columnWidth = (panelWidth - 100) / 2;
+        const leftColumnX = panelX + 30;
+        const rightColumnX = panelX + panelWidth / 2 + 20;
+        const startY = panelY + 90;
+        const lineHeight = 24;
+
+        // 繪製左欄
+        leftColumnLines.forEach((line, index) => {
+            const y = startY + index * lineHeight;
+            if (y < panelY + panelHeight - 80) {
+                this.wrapText(context, line, leftColumnX, y, columnWidth, lineHeight);
+            }
+        });
+
+        // 繪製右欄
+        rightColumnLines.forEach((line, index) => {
+            const y = startY + index * lineHeight;
+            if (y < panelY + panelHeight - 80) {
+                this.wrapText(context, line, rightColumnX, y, columnWidth, lineHeight);
+            }
+        });
+    }
+
+    /**
+     * 包裝文字以適應寬度
+     */
+    wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split('');
+        let line = '';
+        let offsetY = 0;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i];
+            const metrics = context.measureText(testLine);
+            const testWidth = metrics.width;
+
+            if (testWidth > maxWidth && i > 0) {
+                context.fillText(line, x, y + offsetY);
+                line = words[i];
+                offsetY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        context.fillText(line, x, y + offsetY);
     }
 
     /**
