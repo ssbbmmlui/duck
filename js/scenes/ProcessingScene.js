@@ -120,6 +120,7 @@ class ProcessingScene extends Scene {
         await assetManager.loadImage('assets/images/duck/feather_plucking_duck.png', 'feather_plucking_duck');
         await assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers');
         await assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened');
+        await assetManager.loadImage('assets/images/duck/processed_duck.png', 'processed_duck');
         await assetManager.loadImage('assets/images/tools/feather_pluck.png', 'feather_pluck_tool');
         await assetManager.loadImage('assets/images/tools/knife.png', 'knife_tool');
         await assetManager.loadImage('assets/images/tools/water.png', 'water_tool');
@@ -459,13 +460,13 @@ class ProcessingScene extends Scene {
      */
     updateDuckDisplayState(completedStepId) {
         const assetManager = this.gameEngine.assetManager;
-        
+
         if (completedStepId === 'feather_removal') {
             this.duckDisplay.processingState = 'feathers_removed';
             this.duckDisplay.duckImage = assetManager.getAsset('duck_no_feathers');
         } else if (completedStepId === 'opening_cleaning') {
             this.duckDisplay.processingState = 'opened_cleaned';
-            this.duckDisplay.duckImage = assetManager.getAsset('duck_opened');
+            this.duckDisplay.duckImage = assetManager.getAsset('processed_duck');
         }
     }
 
