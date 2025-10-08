@@ -252,27 +252,41 @@ class ProcessingScene extends Scene {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
 
+        // 分割內容為兩列
+        const lines = content.content.split('\n');
+        const midPoint = Math.ceil(lines.length / 2);
+        const leftColumn = lines.slice(0, midPoint).join('\n');
+        const rightColumn = lines.slice(midPoint).join('\n');
+
         // 創建教育面板
         this.educationPanel = {
             title: uiManager.createLabel({
                 x: canvas.width / 2,
-                y: 120,
+                y: 130,
                 text: content.title,
                 fontSize: 20,
                 color: '#FFD700',
                 align: 'center'
             }),
-            content: uiManager.createLabel({
-                x: 80,
-                y: 160,
-                text: content.content,
+            leftContent: uiManager.createLabel({
+                x: 70,
+                y: 170,
+                text: leftColumn,
+                fontSize: 14,
+                color: '#FFFFFF',
+                align: 'left'
+            }),
+            rightContent: uiManager.createLabel({
+                x: canvas.width / 2 + 20,
+                y: 170,
+                text: rightColumn,
                 fontSize: 14,
                 color: '#FFFFFF',
                 align: 'left'
             }),
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
-                y: canvas.height - 120,
+                y: canvas.height - 110,
                 width: 80,
                 height: 35,
                 text: '關閉',
@@ -640,14 +654,26 @@ class ProcessingScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
+        // 繪製全幕遮罩（更深）
+        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // 繪製不透明的面板背景
+        context.fillStyle = 'rgba(40, 30, 20, 0.98)';
+        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 170);
+
         // 繪製邊框
         context.strokeStyle = '#FFD700';
-        context.lineWidth = 2;
-        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
+        context.lineWidth = 3;
+        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 170);
+
+        // 繪製中間分割線
+        context.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(context.canvas.width / 2, 160);
+        context.lineTo(context.canvas.width / 2, context.canvas.height - 130);
+        context.stroke();
     }
 
     /**
