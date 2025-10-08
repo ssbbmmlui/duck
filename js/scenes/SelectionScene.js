@@ -196,20 +196,23 @@ class SelectionScene extends Scene {
             this.educationButton.setVisible(false);
         }
 
-        // 分割內容為多行
-        const contentLines = [
+        // 分割內容為兩列
+        const leftColumnLines = [
             '🦆 優質北京填鴨的特徵：',
             '',
             '📏 體型標準：',
             '  • 體重：2.5-3.5公斤為佳',
-            '  • 體型：胸部豐滿，腹部不過於肥大',
+            '  • 體型：胸部豐滿，腹部不',
+            '      過於肥大',
             '  • 比例：頭小頸短，身體勻稱',
             '',
             '🎨 外觀特徵：',
             '  • 皮膚：淡黃色，光滑有彈性',
             '  • 羽毛：白色，乾淨整潔',
-            '  • 眼睛：明亮有神，無分泌物',
-            '',
+            '  • 眼睛：明亮有神，無分泌物'
+        ];
+
+        const rightColumnLines = [
             '🏥 健康指標：',
             '  • 肌肉：結實有彈性',
             '  • 脂肪：分佈均勻，不過厚',
@@ -242,12 +245,27 @@ class SelectionScene extends Scene {
             })
         };
 
-        // 創建每一行內容
+        // 創建左列內容
         const startY = 135;
         const lineHeight = 20;
-        contentLines.forEach((line, index) => {
+        const leftColumnX = 110;
+        leftColumnLines.forEach((line, index) => {
             const label = uiManager.createLabel({
-                x: 110,
+                x: leftColumnX,
+                y: startY + (index * lineHeight),
+                text: line,
+                fontSize: 14,
+                color: '#FFFFFF',
+                align: 'left'
+            });
+            this.educationPanel.contentLabels.push(label);
+        });
+
+        // 創建右列內容
+        const rightColumnX = canvas.width / 2 + 20;
+        rightColumnLines.forEach((line, index) => {
+            const label = uiManager.createLabel({
+                x: rightColumnX,
                 y: startY + (index * lineHeight),
                 text: line,
                 fontSize: 14,
