@@ -26,15 +26,23 @@ class Scene {
      * 進入場景時調用
      */
     async enter() {
-        this.isActive = true;
-
-        if (!this.isLoaded) {
+        // 如果還沒設置，設置活動和載入狀態
+        if (!this.isActive) {
+            this.isActive = true;
+        }
+        if (!this.isLoading) {
             this.isLoading = true;
-            await this.loadSceneAssets();
-            this.isLoaded = true;
-            this.isLoading = false;
         }
 
+        // 清除舊的UI元素
+        this.cleanup();
+
+        if (!this.isLoaded) {
+            await this.loadSceneAssets();
+            this.isLoaded = true;
+        }
+
+        this.isLoading = false;
         this.setupScene();
         console.log(`進入場景: ${this.name}`);
     }
@@ -107,12 +115,14 @@ class Scene {
             this.currentMiniGame.render(context);
         }
 
-        // 渲染UI元素
-        this.uiElements.forEach(element => {
-            if (element.render) {
-                element.render(context);
-            }
-        });
+        // 只在非載入狀態渲染UI元素
+        if (!this.isLoading) {
+            this.uiElements.forEach(element => {
+                if (element.render) {
+                    element.render(context);
+                }
+            });
+        }
     }
 
     /**
@@ -338,13 +348,20 @@ class SceneManager {
         this.isTransitioning = true;
 
         try {
+            // 創建新場景並立即設置為當前場景（處於載入狀態）
+            const newScene = new SceneClass(sceneName, this.gameEngine);
+            newScene.isActive = true;
+            newScene.isLoading = true;
+
             // 離開當前場景
             if (this.currentScene) {
                 await this.currentScene.exit();
             }
 
-            // 創建並進入新場景
-            this.currentScene = new SceneClass(sceneName, this.gameEngine);
+            // 設置新場景為當前場景
+            this.currentScene = newScene;
+
+            // 進入新場景（這會載入資源）
             await this.currentScene.enter();
 
             // 更新遊戲狀態
