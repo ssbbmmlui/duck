@@ -16,7 +16,7 @@ class OpeningCleaningGame extends MiniGame {
             {
                 id: 'opening',
                 name: '精確開口',
-                description: '在正確位置進行開口切割',
+                description: '從肛門位置沿著綠色垂直線向下切割',
                 completed: false
             },
             {
@@ -105,7 +105,7 @@ class OpeningCleaningGame extends MiniGame {
     loadAssets() {
         if (this.gameEngine && this.gameEngine.assetManager) {
             const assetManager = this.gameEngine.assetManager;
-            this.duckImage = assetManager.getAsset('duck_no_feathers');
+            this.duckImage = assetManager.getAsset('anus_duck');
         }
     }
 
@@ -114,19 +114,19 @@ class OpeningCleaningGame extends MiniGame {
      */
     setupOpeningTarget() {
         const duck = this.duckPosition;
-        
-        // 開口目標區域（腹部下方）
+
+        // 開口目標區域（肆門下方垂直切線）
         this.openingSystem.targetArea = {
-            x: duck.x + duck.width * 0.3,
-            y: duck.y + duck.height * 0.7,
-            width: duck.width * 0.4,
-            height: duck.height * 0.2,
+            x: duck.x + duck.width * 0.45,
+            y: duck.y + duck.height * 0.4,
+            width: duck.width * 0.1,
+            height: duck.height * 0.35,
             idealPath: [
-                { x: duck.x + duck.width * 0.35, y: duck.y + duck.height * 0.75 },
-                { x: duck.x + duck.width * 0.65, y: duck.y + duck.height * 0.75 }
+                { x: duck.x + duck.width * 0.5, y: duck.y + duck.height * 0.4 },
+                { x: duck.x + duck.width * 0.5, y: duck.y + duck.height * 0.75 }
             ]
         };
-        
+
         this.openingSystem.cutLine = [];
         this.openingSystem.accuracy = 0;
     }
@@ -454,22 +454,28 @@ class OpeningCleaningGame extends MiniGame {
      */
     renderOpeningSystem(context) {
         const target = this.openingSystem.targetArea;
-        
-        // 繪製目標開口區域
+
+        // 繪製目標開口區域（垂直區域）
         context.strokeStyle = '#FFD700';
         context.lineWidth = 2;
         context.setLineDash([5, 5]);
         context.strokeRect(target.x, target.y, target.width, target.height);
         context.setLineDash([]);
-        
-        // 繪製理想切割線
+
+        // 繪製理想切割線（垂直線從肛門向下）
         context.strokeStyle = '#32CD32';
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         context.beginPath();
         const idealPath = target.idealPath;
         context.moveTo(idealPath[0].x, idealPath[0].y);
         context.lineTo(idealPath[1].x, idealPath[1].y);
         context.stroke();
+
+        // 在切割線起點標記肛門位置
+        context.fillStyle = '#FF4444';
+        context.beginPath();
+        context.arc(idealPath[0].x, idealPath[0].y, 4, 0, Math.PI * 2);
+        context.fill();
         
         // 繪製玩家的切割軌跡
         if (this.openingSystem.cutLine.length > 1) {
