@@ -379,9 +379,10 @@ class WelcomeScene extends Scene {
         // 渲染遊戲標誌（如果有的話）
         const logo = this.gameEngine.assetManager.getAsset('logo');
         if (logo && logo.width) {
-            const logoX = (context.canvas.width - 200) / 2;
+            const logoSize = 150; // 1:1 ratio
+            const logoX = (context.canvas.width - logoSize) / 2;
             const logoY = 150;
-            context.drawImage(logo, logoX, logoY, 200, 100);
+            context.drawImage(logo, logoX, logoY, logoSize, logoSize);
         } else {
             // 如果沒有標誌圖片，渲染文字標誌
             context.fillStyle = '#8B4513';
