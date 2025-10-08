@@ -118,6 +118,7 @@ class ProcessingScene extends Scene {
         await assetManager.loadImage('assets/images/duck/processing_duck.png', 'processing_duck');
         await assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers');
         await assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened');
+        await assetManager.loadImage('assets/images/tools/feather_pluck.png', 'feather_pluck_tool');
         await assetManager.loadImage('assets/images/tools/knife.png', 'knife_tool');
         await assetManager.loadImage('assets/images/tools/water.png', 'water_tool');
 
@@ -619,7 +620,15 @@ class ProcessingScene extends Scene {
             
             if (currentStep.id === 'feather_removal') {
                 context.fillText('褪毛工具', toolX + 50, toolY - 10);
-                context.fillText('🪶', toolX + 50, toolY + 55);
+
+                // 顯示褪毛工具圖片
+                const featherTool = this.gameEngine.assetManager.getAsset('feather_pluck_tool');
+                if (featherTool) {
+                    const imgSize = 60;
+                    context.drawImage(featherTool, toolX + 20, toolY + 20, imgSize, imgSize);
+                } else {
+                    context.fillText('🪶', toolX + 50, toolY + 55);
+                }
             } else if (currentStep.id === 'opening_cleaning') {
                 context.fillText('開口清洗', toolX + 50, toolY - 10);
                 context.fillText('🔪💧', toolX + 50, toolY + 55);
