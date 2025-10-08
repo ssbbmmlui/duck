@@ -712,6 +712,7 @@ class ProcessingScene extends Scene {
         if (this.stepIndicator) this.stepIndicator.setVisible(false);
         if (this.nextButton) this.nextButton.setVisible(false);
         if (this.backButton) this.backButton.setVisible(false);
+        if (this.educationButton) this.educationButton.setVisible(false);
     }
 
     /**
@@ -723,6 +724,7 @@ class ProcessingScene extends Scene {
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
         if (this.nextButton) this.nextButton.setVisible(true);
         if (this.backButton) this.backButton.setVisible(true);
+        if (this.educationButton) this.educationButton.setVisible(true);
     }
 
     /**

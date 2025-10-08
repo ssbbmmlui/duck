@@ -879,6 +879,7 @@ class PreparationScene extends Scene {
         if (this.stepIndicator) this.stepIndicator.setVisible(false);
         if (this.nextButton) this.nextButton.setVisible(false);
         if (this.backButton) this.backButton.setVisible(false);
+        if (this.educationButton) this.educationButton.setVisible(false);
         if (this.inflationProgressLabel) this.inflationProgressLabel.setVisible(false);
         if (this.coloringProgressLabel) this.coloringProgressLabel.setVisible(false);
     }
@@ -892,6 +893,7 @@ class PreparationScene extends Scene {
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
         if (this.nextButton) this.nextButton.setVisible(true);
         if (this.backButton) this.backButton.setVisible(true);
+        if (this.educationButton) this.educationButton.setVisible(true);
         if (this.inflationProgressLabel) this.inflationProgressLabel.setVisible(true);
         if (this.coloringProgressLabel) this.coloringProgressLabel.setVisible(true);
     }
