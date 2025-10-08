@@ -377,6 +377,12 @@ class SelectionScene extends Scene {
     render(context) {
         if (!this.isActive) return;
 
+        // 如果正在載入，顯示載入畫面
+        if (this.isLoading) {
+            this.renderLoadingScreen(context);
+            return;
+        }
+
         // 渲染背景
         if (this.backgroundImage) {
             context.drawImage(this.backgroundImage, 0, 0, context.canvas.width, context.canvas.height);
