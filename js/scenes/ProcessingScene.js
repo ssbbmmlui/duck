@@ -10,6 +10,7 @@ class ProcessingScene extends Scene {
         this.titleLabel = null;
         this.instructionLabel = null;
         this.educationPanel = null;
+        this.educationButton = null;
         this.nextButton = null;
         this.backButton = null;
         this.stepIndicator = null;
@@ -220,8 +221,8 @@ class ProcessingScene extends Scene {
      */
     createEducationButton() {
         const uiManager = this.gameEngine.uiManager;
-        
-        const educationButton = uiManager.createButton({
+
+        this.educationButton = uiManager.createButton({
             x: 50,
             y: 250,
             width: 120,
@@ -229,9 +230,7 @@ class ProcessingScene extends Scene {
             text: '學習技巧',
             onClick: () => this.showCurrentStepEducation()
         });
-        this.addUIElement(educationButton);
-        
-        this.addUIElement(educationButton);
+        this.addUIElement(this.educationButton);
     }
 
     /**
@@ -251,6 +250,14 @@ class ProcessingScene extends Scene {
         this.showingEducation = true;
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
+
+        // 隱藏其他UI元素
+        if (this.titleLabel) this.titleLabel.setVisible(false);
+        if (this.instructionLabel) this.instructionLabel.setVisible(false);
+        if (this.educationButton) this.educationButton.setVisible(false);
+        if (this.nextButton) this.nextButton.setVisible(false);
+        if (this.backButton) this.backButton.setVisible(false);
+        if (this.stepIndicator) this.stepIndicator.setVisible(false);
 
         // 分割內容為兩列
         const lines = content.content.split('\n');
@@ -317,6 +324,14 @@ class ProcessingScene extends Scene {
         });
 
         this.educationPanel = null;
+
+        // 顯示其他UI元素
+        if (this.titleLabel) this.titleLabel.setVisible(true);
+        if (this.instructionLabel) this.instructionLabel.setVisible(true);
+        if (this.educationButton) this.educationButton.setVisible(true);
+        if (this.nextButton) this.nextButton.setVisible(true);
+        if (this.backButton) this.backButton.setVisible(true);
+        if (this.stepIndicator) this.stepIndicator.setVisible(true);
     }
 
     /**
