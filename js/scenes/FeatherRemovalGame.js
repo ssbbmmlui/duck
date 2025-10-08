@@ -291,8 +291,8 @@ class FeatherRemovalGame extends MiniGame {
      */
     renderDuck(context) {
         const duck = this.duckPosition;
-        
-        if (this.duckImage) {
+
+        if (this.duckImage && this.duckImage.width) {
             context.drawImage(this.duckImage, duck.x, duck.y, duck.width, duck.height);
         } else {
             // 繪製佔位符

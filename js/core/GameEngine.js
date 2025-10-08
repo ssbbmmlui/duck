@@ -140,7 +140,8 @@ class GameEngine {
             const coreAssets = [
                 { type: 'image', name: 'background_welcome', path: 'assets/images/backgrounds/welcome_bg.png' },
                 { type: 'image', name: 'logo', path: 'assets/images/ui/game_logo.png' },
-                { type: 'image', name: 'button_start', path: 'assets/images/ui/button_start.png' }
+                { type: 'image', name: 'button_start', path: 'assets/images/ui/button_start.png' },
+                { type: 'image', name: 'processing_duck', path: 'assets/images/duck/processing_duck.png' }
             ];
 
             // 嘗試載入資源，但不阻塞遊戲初始化

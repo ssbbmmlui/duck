@@ -115,13 +115,14 @@ class ProcessingScene extends Scene {
         // 載入背景和處理相關圖片
         await assetManager.loadImage('assets/images/backgrounds/processing_bg.png', 'background_processing');
         await assetManager.loadImage('assets/images/duck/raw_duck.png', 'duck_raw');
+        await assetManager.loadImage('assets/images/duck/processing_duck.png', 'processing_duck');
         await assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers');
         await assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened');
         await assetManager.loadImage('assets/images/tools/knife.png', 'knife_tool');
         await assetManager.loadImage('assets/images/tools/water.png', 'water_tool');
-        
+
         this.backgroundImage = assetManager.getAsset('background_processing');
-        this.duckDisplay.duckImage = assetManager.getAsset('duck_raw');
+        this.duckDisplay.duckImage = assetManager.getAsset('processing_duck');
     }
 
     /**
