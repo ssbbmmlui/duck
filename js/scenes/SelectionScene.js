@@ -101,7 +101,7 @@ class SelectionScene extends Scene {
         });
 
         // 創建教育內容按鈕 - 放置在卡片左上角
-        const educationButton = uiManager.createButton({
+        this.educationButton = uiManager.createButton({
             x: 90,
             y: 120,
             width: 100,
@@ -109,7 +109,7 @@ class SelectionScene extends Scene {
             text: '選材知識',
             onClick: () => this.toggleEducationPanel()
         });
-        this.addUIElement(educationButton);
+        this.addUIElement(this.educationButton);
 
         // 創建開始迷你遊戲按鈕
         this.nextButton = uiManager.createButton({
@@ -191,6 +191,11 @@ class SelectionScene extends Scene {
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
 
+        // 隱藏選材知識按鈕
+        if (this.educationButton) {
+            this.educationButton.setVisible(false);
+        }
+
         // 分割內容為多行
         const contentLines = [
             '🦆 優質北京填鴨的特徵：',
@@ -220,7 +225,7 @@ class SelectionScene extends Scene {
         this.educationPanel = {
             title: uiManager.createLabel({
                 x: canvas.width / 2,
-                y: 70,
+                y: 100,
                 text: this.educationContent.title,
                 fontSize: 18,
                 color: '#FFD700',
@@ -229,7 +234,7 @@ class SelectionScene extends Scene {
             contentLabels: [],
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
-                y: canvas.height - 80,
+                y: canvas.height - 100,
                 width: 80,
                 height: 35,
                 text: '關閉',
@@ -238,14 +243,14 @@ class SelectionScene extends Scene {
         };
 
         // 創建每一行內容
-        const startY = 110;
-        const lineHeight = 22;
+        const startY = 135;
+        const lineHeight = 20;
         contentLines.forEach((line, index) => {
             const label = uiManager.createLabel({
-                x: 100,
+                x: 110,
                 y: startY + (index * lineHeight),
                 text: line,
-                fontSize: 15,
+                fontSize: 14,
                 color: '#FFFFFF',
                 align: 'left'
             });
@@ -271,6 +276,11 @@ class SelectionScene extends Scene {
 
         this.showingEducation = false;
         const uiManager = this.gameEngine.uiManager;
+
+        // 顯示選材知識按鈕
+        if (this.educationButton) {
+            this.educationButton.setVisible(true);
+        }
 
         // 移除標題
         if (this.educationPanel.title) {
@@ -420,14 +430,18 @@ class SelectionScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-        context.fillRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
+        // 繪製全螢幕半透明背景遮罩
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // 繪製教育面板背景
+        context.fillStyle = 'rgba(30, 30, 30, 0.98)';
+        context.fillRect(80, 80, context.canvas.width - 160, context.canvas.height - 160);
 
         // 繪製邊框
         context.strokeStyle = '#FFD700';
-        context.lineWidth = 2;
-        context.strokeRect(40, 50, context.canvas.width - 80, context.canvas.height - 130);
+        context.lineWidth = 3;
+        context.strokeRect(80, 80, context.canvas.width - 160, context.canvas.height - 160);
     }
 
     /**
@@ -481,6 +495,7 @@ class SelectionScene extends Scene {
         if (this.instructionLabel) this.instructionLabel.setVisible(false);
         if (this.nextButton) this.nextButton.setVisible(false);
         if (this.backButton) this.backButton.setVisible(false);
+        if (this.educationButton) this.educationButton.setVisible(false);
     }
 
     /**
@@ -491,6 +506,7 @@ class SelectionScene extends Scene {
         if (this.instructionLabel) this.instructionLabel.setVisible(true);
         if (this.nextButton) this.nextButton.setVisible(true);
         if (this.backButton) this.backButton.setVisible(true);
+        if (this.educationButton) this.educationButton.setVisible(true);
     }
 
     /**
