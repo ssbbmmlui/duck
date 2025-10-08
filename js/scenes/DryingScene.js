@@ -1377,13 +1377,14 @@ class DryingScene extends Scene {
      */
     cleanup() {
         super.cleanup();
-        
+
         const uiManager = this.gameEngine.uiManager;
         if (this.titleLabel) uiManager.removeUIElement(this.titleLabel);
         if (this.instructionLabel) uiManager.removeUIElement(this.instructionLabel);
         if (this.stepIndicator) uiManager.removeUIElement(this.stepIndicator);
         if (this.nextButton) uiManager.removeUIElement(this.nextButton);
         if (this.backButton) uiManager.removeUIElement(this.backButton);
+        if (this.educationButton) uiManager.removeUIElement(this.educationButton);
         if (this.timeDisplayLabel) uiManager.removeUIElement(this.timeDisplayLabel);
         if (this.timeSpeedButton) uiManager.removeUIElement(this.timeSpeedButton);
         if (this.pauseButton) uiManager.removeUIElement(this.pauseButton);
@@ -1393,7 +1394,7 @@ class DryingScene extends Scene {
         if (this.dryingProgressLabel) uiManager.removeUIElement(this.dryingProgressLabel);
         if (this.moistureLabel) uiManager.removeUIElement(this.moistureLabel);
         if (this.tightnessLabel) uiManager.removeUIElement(this.tightnessLabel);
-        
+
         this.hideEducationPanel();
     }
 }

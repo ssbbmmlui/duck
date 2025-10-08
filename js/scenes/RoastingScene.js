@@ -1453,6 +1453,20 @@ class RoastingScene extends Scene {
         context.lineWidth = 3;
         context.strokeRect(panelX, panelY, panelWidth, panelHeight);
     }
+
+    /**
+     * 清理場景
+     */
+    cleanup() {
+        super.cleanup();
+
+        const uiManager = this.gameEngine.uiManager;
+        this.uiElements.forEach(element => {
+            uiManager.removeUIElement(element);
+        });
+
+        this.hideEducationPanel();
+    }
 }
 // 匯出到全域作用域
 window.RoastingScene = RoastingScene;

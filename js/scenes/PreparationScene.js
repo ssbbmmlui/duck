@@ -912,16 +912,17 @@ class PreparationScene extends Scene {
      */
     cleanup() {
         super.cleanup();
-        
+
         const uiManager = this.gameEngine.uiManager;
         if (this.titleLabel) uiManager.removeUIElement(this.titleLabel);
         if (this.instructionLabel) uiManager.removeUIElement(this.instructionLabel);
         if (this.stepIndicator) uiManager.removeUIElement(this.stepIndicator);
         if (this.nextButton) uiManager.removeUIElement(this.nextButton);
         if (this.backButton) uiManager.removeUIElement(this.backButton);
+        if (this.educationButton) uiManager.removeUIElement(this.educationButton);
         if (this.inflationProgressLabel) uiManager.removeUIElement(this.inflationProgressLabel);
         if (this.coloringProgressLabel) uiManager.removeUIElement(this.coloringProgressLabel);
-        
+
         this.hideEducationPanel();
     }
 }

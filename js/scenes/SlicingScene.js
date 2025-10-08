@@ -1342,8 +1342,22 @@ class SlicingScene extends Scene {
         context.strokeStyle = '#FFD700';
         context.lineWidth = 3;
         context.strokeRect(60, 100, canvas.width - 120, canvas.height - 200);
-        
+
         context.restore();
+    }
+
+    /**
+     * 清理場景
+     */
+    cleanup() {
+        super.cleanup();
+
+        const uiManager = this.gameEngine.uiManager;
+        this.uiElements.forEach(element => {
+            uiManager.removeUIElement(element);
+        });
+
+        this.hideEducationPanel();
     }
 }
 // 匯出到全域作用域
