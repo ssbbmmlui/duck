@@ -130,10 +130,10 @@ class FeatherRemovalGame extends MiniGame {
         
         const uiManager = this.gameEngine.uiManager;
         
-        // 創建工具按鈕 - 更好的布局
+        // 創建工具按鈕 - 移到右側不遮擋內容
         this.hotWaterButton = uiManager.createButton({
-            x: this.gameArea.x + 20,
-            y: this.gameArea.y + 15,
+            x: this.gameArea.x + this.gameArea.width - 220,
+            y: this.gameArea.y - 55,
             width: 100,
             height: 40,
             text: '熱水燙毛',
@@ -141,18 +141,18 @@ class FeatherRemovalGame extends MiniGame {
         });
 
         this.handButton = uiManager.createButton({
-            x: this.gameArea.x + 130,
-            y: this.gameArea.y + 15,
+            x: this.gameArea.x + this.gameArea.width - 110,
+            y: this.gameArea.y - 55,
             width: 100,
             height: 40,
             text: '手工拔毛',
             onClick: () => this.selectTool('hand')
         });
 
-        // 創建羽毛計數器 - 更清晰的位置
+        // 創建羽毛計數器 - 移到右上角
         this.featherCounter = uiManager.createLabel({
             x: this.gameArea.x + this.gameArea.width - 20,
-            y: this.gameArea.y + 35,
+            y: this.gameArea.y + 20,
             text: `剩餘: ${this.totalFeathers - this.removedFeathers}`,
             fontSize: 18,
             color: '#2563eb',

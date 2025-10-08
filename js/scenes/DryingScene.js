@@ -760,12 +760,20 @@ class DryingScene extends Scene {
     }
 
     /**
+     * 迷你遊戲返回回調
+     */
+    onMiniGameBack() {
+        console.log('從迷你遊戲返回到晾胚場景');
+        this.showSceneUI();
+    }
+
+    /**
      * 迷你遊戲完成回調
      */
     onMiniGameComplete(success, stats) {
         const gameName = this.currentMiniGame ? this.currentMiniGame.name : '未知遊戲';
         console.log(`${gameName}完成:`, success ? '成功' : '失敗');
-        
+
         // 顯示場景UI
         this.showSceneUI();
         
