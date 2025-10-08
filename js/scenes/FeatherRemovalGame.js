@@ -65,7 +65,7 @@ class FeatherRemovalGame extends MiniGame {
     loadAssets() {
         if (this.gameEngine && this.gameEngine.assetManager) {
             const assetManager = this.gameEngine.assetManager;
-            this.duckImage = assetManager.getAsset('duck_raw');
+            this.duckImage = assetManager.getAsset('processing_duck');
         }
     }
 
