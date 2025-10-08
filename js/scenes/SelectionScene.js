@@ -371,14 +371,41 @@ class SelectionScene extends Scene {
     /**
      * 渲染場景特定內容
      */
-    renderScene(context) {
-        // 渲染鴨子展示區域
-        this.renderDuckDisplay(context);
-        
-        // 渲染教育面板背景
+    /**
+     * 覆寫渲染方法以確保教育面板在最上層
+     */
+    render(context) {
+        if (!this.isActive) return;
+
+        // 渲染背景
+        if (this.backgroundImage) {
+            context.drawImage(this.backgroundImage, 0, 0, context.canvas.width, context.canvas.height);
+        }
+
+        // 渲染場景特定內容
+        this.renderScene(context);
+
+        // 渲染當前迷你遊戲
+        if (this.currentMiniGame) {
+            this.currentMiniGame.render(context);
+        }
+
+        // 渲染教育面板背景（在迷你遊戲之後）
         if (this.showingEducation) {
             this.renderEducationPanelBackground(context);
         }
+
+        // 渲染UI元素
+        this.uiElements.forEach(element => {
+            if (element.render) {
+                element.render(context);
+            }
+        });
+    }
+
+    renderScene(context) {
+        // 渲染鴨子展示區域
+        this.renderDuckDisplay(context);
     }
 
     /**

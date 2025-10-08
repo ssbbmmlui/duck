@@ -407,7 +407,12 @@ class MiniGame {
         if (this.onBack) {
             this.onBack();
         } else {
-            this.complete(false);
+            // 允許除錯時返回，不標記為失敗
+            this.isActive = false;
+            this.isCompleted = false;
+            if (this.scene && this.scene.onMiniGameComplete) {
+                this.scene.onMiniGameComplete(false, this.stats);
+            }
         }
     }
 
@@ -419,6 +424,7 @@ class MiniGame {
         if (this.onSkip) {
             this.onSkip();
         } else {
+            // 允許除錯時跳過遊戲
             this.complete(true);
         }
     }
