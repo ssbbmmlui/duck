@@ -526,16 +526,10 @@ class PreparationScene extends Scene {
                         }
 
                         // 顯示製胚完成消息
-                        const uiManager = this.gameEngine.uiManager;
-                        const canvas = this.gameEngine.canvas;
-                        uiManager.createDismissibleMessage({
-                            text: '🎉 製胚階段完成！\n\n充氣支撐和燙皮上色都已完成\n鴨胚已準備就緒\n\n點擊按鈕進入晾胚階段',
-                            x: canvas.width / 2,
-                            y: canvas.height / 2 - 80,
-                            fontSize: 20,
-                            color: '#228B22',
-                            autoDismissTime: 6000
-                        });
+                        const visualFeedback = this.gameEngine.visualFeedback;
+                        if (visualFeedback) {
+                            visualFeedback.showMessage('製胚階段完成！充氣支撐和燙皮上色都已完成，點擊按鈕進入晾胚階段', 'success');
+                        }
 
                         console.log('按鈕狀態:', {
                             text: this.nextButton ? this.nextButton.text : 'null',
@@ -630,17 +624,10 @@ class PreparationScene extends Scene {
      * 顯示成功消息
      */
     showSuccessMessage(stepName, score) {
-        const uiManager = this.gameEngine.uiManager;
-        const canvas = this.gameEngine.canvas;
-
-        uiManager.createDismissibleMessage({
-            text: `${stepName}完成！\n獲得分數: ${score}\n製胚技藝精進！`,
-            x: canvas.width / 2,
-            y: canvas.height / 2 - 50,
-            fontSize: 18,
-            color: '#32CD32',
-            autoDismissTime: 5000
-        });
+        const visualFeedback = this.gameEngine.visualFeedback;
+        if (visualFeedback) {
+            visualFeedback.showMessage(`${stepName}完成！獲得分數: ${score}`, 'success');
+        }
 
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');
@@ -651,17 +638,13 @@ class PreparationScene extends Scene {
      * 顯示重試消息
      */
     showRetryMessage() {
-        const uiManager = this.gameEngine.uiManager;
-        const canvas = this.gameEngine.canvas;
-
-        uiManager.createDismissibleMessage({
-            text: '製胚需要精確技巧，請再試一次',
-            x: canvas.width / 2,
-            y: canvas.height / 2 - 50,
-            fontSize: 18,
-            color: '#FF6B6B',
-            autoDismissTime: 5000
-        });
+        const visualFeedback = this.gameEngine.visualFeedback;
+        if (visualFeedback) {
+            visualFeedback.showMessage('製胚需要精確技巧，請再試一次', 'error');
+        }
+        setTimeout(() => {
+            this.showSceneUI();
+        }, 2000);
     }
 
     /**
