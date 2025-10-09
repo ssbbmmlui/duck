@@ -378,13 +378,23 @@ class MiniGame {
      * 計算時間獎勵
      */
     calculateTimeBonus() {
-        if (this.config.timeLimit <= 0) return 0;
-        
         const elapsed = this.stats.endTime - this.stats.startTime;
-        const remaining = Math.max(0, this.config.timeLimit - elapsed);
-        const timeRatio = remaining / this.config.timeLimit;
-        
-        return Math.round(timeRatio * 50); // 最多50分時間獎勵
+
+        if (this.config.timeLimit > 0) {
+            // 有時間限制：剩餘時間越多獎勵越高
+            const remaining = Math.max(0, this.config.timeLimit - elapsed);
+            const timeRatio = remaining / this.config.timeLimit;
+            return Math.round(timeRatio * 50); // 最多50分時間獎勵
+        } else {
+            // 無時間限制：完成速度越快獎勵越高
+            const elapsedSeconds = elapsed / 1000;
+            if (elapsedSeconds <= 10) return 50; // 10秒內完成
+            if (elapsedSeconds <= 20) return 40; // 20秒內完成
+            if (elapsedSeconds <= 30) return 30; // 30秒內完成
+            if (elapsedSeconds <= 45) return 20; // 45秒內完成
+            if (elapsedSeconds <= 60) return 10; // 60秒內完成
+            return 0; // 超過60秒無獎勵
+        }
     }
 
     /**

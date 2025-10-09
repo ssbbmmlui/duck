@@ -6,8 +6,8 @@ class InflationSupportGame extends MiniGame {
     constructor(config = {}) {
         super({
             name: '充氣支撐遊戲',
-            timeLimit: 90000, // 90秒時間限制
-            successThreshold: 0.9, // 需要達到90%完成度
+            timeLimit: 0, // 無時間限制，計時向上累加
+            successThreshold: 0.85, // 需要達到85%完成度
             ...config
         });
         
@@ -284,13 +284,14 @@ class InflationSupportGame extends MiniGame {
                     this.gameEngine.audioManager.playSound('success_sound');
                 }
 
-                // 延遲完成遊戲，讓玩家看到完成效果
-                setTimeout(() => {
-                    if (this.inflationCompleted && this.supportCompleted) {
-                        console.log('充氣支撐遊戲完成！');
-                        this.complete(true);
-                    }
-                }, 1000);
+                // 立即完成遊戲
+                console.log('充氣支撐遊戲完成！');
+                // 確保進度達到成功閾值
+                this.updateTotalProgress();
+                // 使用 requestAnimationFrame 確保在下一幀完成
+                requestAnimationFrame(() => {
+                    this.complete(true);
+                });
             }
         }
     }
