@@ -1,17 +1,16 @@
 /**
  * 重量測量迷你遊戲
- * 玩家需要點擊移動的鴨子來防止它逃離秤
+ * 玩家需要點擊移動的鴨子來防止它逃離秤，並盡量保持在中心位置獲得更高分數
  */
 class WeightMeasurementGame extends MiniGame {
     constructor(config = {}) {
         super({
             name: '重量測量',
-            timeLimit: 0, // 移除時間限制
+            timeLimit: 0,
             successThreshold: 1.0,
             ...config
         });
 
-        // 鴨子物件
         this.duck = {
             x: 0,
             y: 0,
@@ -21,14 +20,15 @@ class WeightMeasurementGame extends MiniGame {
             baseY: 0,
             onScale: false,
             targetWeight: 3.2,
-            moveSpeed: 2,
+            moveSpeed: 2.5,
             moveDirection: 1,
             moveRange: 60,
-            escapeAttempting: false,
-            escapeSpeed: 0
+            isEscaping: false,
+            escapeSpeed: 0,
+            timeSinceLastClick: 0,
+            escapeThreshold: 2000
         };
 
-        // 秤的配置
         this.scale = {
             x: 400,
             y: 280,
@@ -41,101 +41,85 @@ class WeightMeasurementGame extends MiniGame {
             displayWidth: 100,
             displayHeight: 60,
             currentWeight: 0,
-            isActive: false
+            isActive: false,
+            centerX: 0
         };
 
-        // 測量狀態
         this.measurementState = {
-            phase: 'drag', // drag, weighing, complete
+            phase: 'drag',
             weighingTimer: 0,
-            requiredWeighingTime: 5000, // 需要保持5秒
-            measurementComplete: false
+            requiredWeighingTime: 5000,
+            measurementComplete: false,
+            currentScore: 0,
+            maxScore: 100,
+            centerBonus: 0
         };
 
-        // 拖拽系統
         this.dragSystem = {
             isDragging: false,
             initialDragComplete: false
         };
 
-        // 視覺效果
         this.particles = [];
         this.feedbackMessages = [];
 
-        // 圖片資源
         this.duckImage = null;
         this.scaleImage = null;
     }
 
-    /**
-     * 設置遊戲
-     */
     setupGame() {
-        // 設置鴨子初始位置
         this.duck.x = 150;
         this.duck.y = 250;
         this.duck.onScale = false;
-        this.duck.escapeAttempting = false;
+        this.duck.isEscaping = false;
         this.duck.escapeSpeed = 0;
         this.duck.moveDirection = 1;
+        this.duck.timeSinceLastClick = 0;
 
-        // 計算秤上的基準位置
         this.duck.baseX = this.scale.x + (this.scale.width - this.duck.width) / 2;
         this.duck.baseY = this.scale.plateY - this.duck.height + 5;
+        this.scale.centerX = this.scale.x + this.scale.width / 2;
 
-        // 重置秤的狀態
         this.scale.currentWeight = 0;
         this.scale.isActive = false;
 
-        // 重置測量狀態
         this.measurementState.phase = 'drag';
         this.measurementState.weighingTimer = 0;
         this.measurementState.measurementComplete = false;
+        this.measurementState.currentScore = 0;
+        this.measurementState.centerBonus = 0;
 
-        // 重置拖拽系統
         this.dragSystem.isDragging = false;
         this.dragSystem.initialDragComplete = false;
 
-        // 清空效果
         this.particles = [];
         this.feedbackMessages = [];
 
-        // 載入圖片
         if (this.gameEngine && this.gameEngine.assetManager) {
             this.duckImage = this.gameEngine.assetManager.getAsset('raw_duck');
             this.scaleImage = this.gameEngine.assetManager.getAsset('scale');
         }
     }
 
-    /**
-     * 獲取遊戲說明
-     */
     getInstructions() {
         if (this.measurementState.phase === 'complete') {
-            return '測量完成！鴨子重量符合標準';
+            return `測量完成！分數: ${this.measurementState.currentScore.toFixed(0)}`;
         } else if (this.measurementState.phase === 'weighing') {
-            return '點擊鴨子防止它逃離秤！保持5秒完成測量';
+            return '點擊鴨子保持在中心！越靠近中心分數越高';
         } else {
             return '拖拽鴨子到秤上進行重量測量';
         }
     }
 
-    /**
-     * 更新遊戲邏輯
-     */
     updateGame(deltaTime) {
         if (this.measurementState.phase === 'drag') {
-            // 拖拽階段
             this.checkDuckOnScale();
         } else if (this.measurementState.phase === 'weighing') {
-            // 測量階段
             this.updateWeighingPhase(deltaTime);
         }
 
-        // 更新視覺效果
         this.updateVisualEffects(deltaTime);
 
-        // 更新進度
         if (this.measurementState.phase === 'weighing') {
             const progress = this.measurementState.weighingTimer / this.measurementState.requiredWeighingTime;
             this.updateProgress(Math.min(1.0, progress));
@@ -145,72 +129,62 @@ class WeightMeasurementGame extends MiniGame {
             this.updateProgress(0);
         }
 
-        // 更新說明文字
         if (this.instructions) {
             this.instructions.setText(this.getInstructions());
         }
     }
 
-    /**
-     * 更新測量階段
-     */
     updateWeighingPhase(deltaTime) {
         if (this.measurementState.measurementComplete) return;
 
-        // 鴨子左右移動
-        this.duck.x += this.duck.moveSpeed * this.duck.moveDirection;
+        this.duck.timeSinceLastClick += deltaTime;
 
-        // 檢查移動範圍並反轉方向
-        const distanceFromBase = this.duck.x - this.duck.baseX;
-        if (Math.abs(distanceFromBase) >= this.duck.moveRange) {
-            this.duck.moveDirection *= -1;
-            this.duck.x = this.duck.baseX + this.duck.moveRange * Math.sign(distanceFromBase);
+        if (this.duck.timeSinceLastClick > this.duck.escapeThreshold && !this.duck.isEscaping) {
+            this.duck.isEscaping = true;
+            this.duck.escapeSpeed = 2;
         }
 
-        // 隨機觸發逃離嘗試
-        if (!this.duck.escapeAttempting && Math.random() < 0.002) {
-            this.duck.escapeAttempting = true;
-            this.duck.escapeSpeed = 3;
-        }
-
-        // 處理逃離行為
-        if (this.duck.escapeAttempting) {
+        if (this.duck.isEscaping) {
             this.duck.y -= this.duck.escapeSpeed;
-            this.duck.escapeSpeed += 0.1; // 加速
+            this.duck.escapeSpeed += 0.15;
 
-            // 檢查是否逃離秤
-            if (this.duck.y < this.duck.baseY - 50) {
-                this.resetToScale();
-                this.measurementState.weighingTimer = 0;
-                this.createFeedbackMessage('鴨子逃跑了！重新計時', this.scale.displayX, this.scale.displayY - 40, '#FF0000');
+            if (this.duck.y < this.duck.baseY - 80) {
+                this.duckEscaped();
                 return;
             }
-        }
+        } else {
+            this.duck.x += this.duck.moveSpeed * this.duck.moveDirection;
 
-        // 檢查鴨子是否還在秤的範圍內
-        const isOnScale = this.checkIfOnScale();
-        if (!isOnScale) {
-            this.resetToScale();
-            this.measurementState.weighingTimer = 0;
-            this.createFeedbackMessage('鴨子離開秤了！重新計時', this.scale.displayX, this.scale.displayY - 40, '#FF0000');
-            return;
-        }
+            const distanceFromBase = this.duck.x - this.duck.baseX;
+            if (Math.abs(distanceFromBase) >= this.duck.moveRange) {
+                this.duck.moveDirection *= -1;
+                this.duck.x = this.duck.baseX + this.duck.moveRange * Math.sign(distanceFromBase);
+            }
 
-        // 增加測量時間
-        this.measurementState.weighingTimer += deltaTime;
+            const isOnScale = this.checkIfOnScale();
+            if (!isOnScale) {
+                this.duckEscaped();
+                return;
+            }
 
-        // 更新重量顯示
-        this.scale.currentWeight = this.duck.targetWeight + Math.sin(Date.now() * 0.01) * 0.05;
+            this.measurementState.weighingTimer += deltaTime;
 
-        // 檢查是否完成
-        if (this.measurementState.weighingTimer >= this.measurementState.requiredWeighingTime) {
-            this.completeMeasurement();
+            const duckCenterX = this.duck.x + this.duck.width / 2;
+            const distanceFromCenter = Math.abs(duckCenterX - this.scale.centerX);
+            const maxDistance = this.scale.width / 2;
+            const centerScore = Math.max(0, 1 - (distanceFromCenter / maxDistance));
+
+            this.measurementState.centerBonus += centerScore * deltaTime * 0.01;
+            this.measurementState.currentScore = (this.measurementState.weighingTimer / this.measurementState.requiredWeighingTime) * this.measurementState.maxScore * (1 + this.measurementState.centerBonus * 0.5);
+
+            this.scale.currentWeight = this.duck.targetWeight + Math.sin(Date.now() * 0.01) * 0.05;
+
+            if (this.measurementState.weighingTimer >= this.measurementState.requiredWeighingTime) {
+                this.completeMeasurement();
+            }
         }
     }
 
-    /**
-     * 檢查鴨子是否在秤上
-     */
     checkIfOnScale() {
         const duckCenterX = this.duck.x + this.duck.width / 2;
         const duckBottom = this.duck.y + this.duck.height;
@@ -224,51 +198,55 @@ class WeightMeasurementGame extends MiniGame {
                duckBottom >= scaleTop && duckBottom <= scaleBottom;
     }
 
-    /**
-     * 檢查鴨子是否被放到秤上（拖拽階段）
-     */
     checkDuckOnScale() {
         if (!this.dragSystem.initialDragComplete) return;
 
         const isOnScale = this.checkIfOnScale();
 
         if (isOnScale && !this.duck.onScale) {
-            // 剛放到秤上
             this.duck.onScale = true;
             this.startWeighing();
         }
     }
 
-    /**
-     * 開始測量
-     */
     startWeighing() {
         this.measurementState.phase = 'weighing';
         this.scale.isActive = true;
         this.scale.currentWeight = this.duck.targetWeight;
 
-        // 將鴨子固定到秤上的基準位置
         this.duck.x = this.duck.baseX;
         this.duck.y = this.duck.baseY;
+        this.duck.timeSinceLastClick = 0;
 
         this.createPlacementEffect();
         this.createFeedbackMessage('開始測量！點擊鴨子防止它逃跑', this.scale.displayX, this.scale.displayY - 40, '#32CD32');
     }
 
-    /**
-     * 重置鴨子到秤上
-     */
-    resetToScale() {
-        this.duck.x = this.duck.baseX;
-        this.duck.y = this.duck.baseY;
-        this.duck.escapeAttempting = false;
+    duckEscaped() {
+        this.measurementState.phase = 'drag';
+        this.measurementState.weighingTimer = 0;
+        this.measurementState.centerBonus = 0;
+        this.duck.onScale = false;
+        this.duck.isEscaping = false;
         this.duck.escapeSpeed = 0;
-        this.duck.moveDirection = 1;
+        this.duck.timeSinceLastClick = 0;
+        this.duck.x = 150;
+        this.duck.y = 250;
+        this.scale.isActive = false;
+        this.dragSystem.initialDragComplete = false;
+
+        this.createFeedbackMessage('鴨子逃跑了！重新放到秤上', this.scale.displayX, this.scale.displayY - 40, '#FF0000');
     }
 
-    /**
-     * 創建放置效果
-     */
+    resetToCenter() {
+        this.duck.x = this.duck.baseX;
+        this.duck.y = this.duck.baseY;
+        this.duck.isEscaping = false;
+        this.duck.escapeSpeed = 0;
+        this.duck.moveDirection = 1;
+        this.duck.timeSinceLastClick = 0;
+    }
+
     createPlacementEffect() {
         const centerX = this.duck.x + this.duck.width / 2;
         const centerY = this.duck.y + this.duck.height / 2;
@@ -291,31 +269,27 @@ class WeightMeasurementGame extends MiniGame {
         }
     }
 
-    /**
-     * 完成測量
-     */
     completeMeasurement() {
         this.measurementState.phase = 'complete';
         this.measurementState.measurementComplete = true;
 
         const weight = this.scale.currentWeight.toFixed(1);
+        const finalScore = Math.round(this.measurementState.currentScore);
+
         this.createFeedbackMessage(
-            `測量完成！重量: ${weight}公斤`,
+            `測量完成！重量: ${weight}公斤 | 分數: ${finalScore}`,
             this.scale.displayX + this.scale.displayWidth / 2,
             this.scale.displayY - 20,
             '#32CD32'
         );
 
         if (this.gameEngine) {
-            this.gameEngine.addScore(50, this.scale.displayX, this.scale.displayY, 'weight_measurement');
+            this.gameEngine.addScore(finalScore, this.scale.displayX, this.scale.displayY, 'weight_measurement');
         }
 
-        console.log(`重量測量完成: ${weight}公斤`);
+        console.log(`重量測量完成: ${weight}公斤, 分數: ${finalScore}`);
     }
 
-    /**
-     * 更新視覺效果
-     */
     updateVisualEffects(deltaTime) {
         this.particles = this.particles.filter(particle => {
             particle.x += particle.vx * deltaTime * 0.1;
@@ -333,9 +307,6 @@ class WeightMeasurementGame extends MiniGame {
         });
     }
 
-    /**
-     * 創建反饋消息
-     */
     createFeedbackMessage(text, x, y, color = '#32CD32') {
         this.feedbackMessages.push({
             text: text,
@@ -349,9 +320,6 @@ class WeightMeasurementGame extends MiniGame {
         });
     }
 
-    /**
-     * 渲染遊戲內容
-     */
     renderGame(context) {
         this.renderScale(context);
         this.renderDuck(context);
@@ -364,12 +332,11 @@ class WeightMeasurementGame extends MiniGame {
 
         if (this.measurementState.phase === 'weighing') {
             this.renderWeighingProgress(context);
+            this.renderCenterIndicator(context);
+            this.renderScoreDisplay(context);
         }
     }
 
-    /**
-     * 渲染秤
-     */
     renderScale(context) {
         const scale = this.scale;
 
@@ -409,9 +376,6 @@ class WeightMeasurementGame extends MiniGame {
         context.fillText('電子秤', scale.x + scale.width / 2, scale.y + scale.height + 20);
     }
 
-    /**
-     * 渲染鴨子
-     */
     renderDuck(context) {
         const duck = this.duck;
 
@@ -437,7 +401,6 @@ class WeightMeasurementGame extends MiniGame {
                 context.shadowBlur = 10;
             }
 
-            // Mirror the image when moving right (moveDirection = 1)
             if (this.measurementState.phase === 'weighing' && duck.moveDirection === 1) {
                 context.translate(duck.x + duck.width, duck.y);
                 context.scale(-1, 1);
@@ -461,16 +424,43 @@ class WeightMeasurementGame extends MiniGame {
             context.fillText('鴨子', duck.x + duck.width / 2, duck.y + duck.height / 2);
         }
 
-        if (duck.escapeAttempting) {
+        if (duck.isEscaping) {
             context.strokeStyle = '#FF0000';
             context.lineWidth = 3;
             context.strokeRect(duck.x - 2, duck.y - 2, duck.width + 4, duck.height + 4);
         }
     }
 
-    /**
-     * 渲染粒子效果
-     */
+    renderCenterIndicator(context) {
+        const centerX = this.scale.centerX;
+        const centerY = this.scale.plateY + this.scale.plateHeight / 2;
+
+        context.strokeStyle = '#32CD32';
+        context.lineWidth = 2;
+        context.setLineDash([5, 5]);
+        context.beginPath();
+        context.moveTo(centerX, centerY - 40);
+        context.lineTo(centerX, centerY + 10);
+        context.stroke();
+        context.setLineDash([]);
+
+        context.fillStyle = '#32CD32';
+        context.beginPath();
+        context.arc(centerX, centerY, 4, 0, Math.PI * 2);
+        context.fill();
+    }
+
+    renderScoreDisplay(context) {
+        const score = Math.round(this.measurementState.currentScore);
+        const x = this.scale.displayX + this.scale.displayWidth / 2;
+        const y = this.scale.displayY - 60;
+
+        context.fillStyle = '#FFD700';
+        context.font = 'bold 20px Microsoft JhengHei';
+        context.textAlign = 'center';
+        context.fillText(`分數: ${score}`, x, y);
+    }
+
     renderParticles(context) {
         this.particles.forEach(particle => {
             context.save();
@@ -483,9 +473,6 @@ class WeightMeasurementGame extends MiniGame {
         });
     }
 
-    /**
-     * 渲染反饋消息
-     */
     renderFeedbackMessages(context) {
         this.feedbackMessages.forEach(msg => {
             context.save();
@@ -498,9 +485,6 @@ class WeightMeasurementGame extends MiniGame {
         });
     }
 
-    /**
-     * 渲染拖拽提示
-     */
     renderDragHints(context) {
         if (this.measurementState.phase === 'drag' && !this.duck.onScale) {
             const arrowStartX = this.duck.x + this.duck.width;
@@ -528,9 +512,6 @@ class WeightMeasurementGame extends MiniGame {
         }
     }
 
-    /**
-     * 渲染測量進度
-     */
     renderWeighingProgress(context) {
         const progressBarX = this.scale.displayX;
         const progressBarY = this.scale.displayY + this.scale.displayHeight + 20;
@@ -555,9 +536,6 @@ class WeightMeasurementGame extends MiniGame {
         context.fillText(`${remainingTime.toFixed(1)}秒`, progressBarX + progressBarWidth / 2, progressBarY + progressBarHeight + 15);
     }
 
-    /**
-     * 處理遊戲特定輸入
-     */
     handleGameInput(event) {
         const duck = this.duck;
 
@@ -571,8 +549,8 @@ class WeightMeasurementGame extends MiniGame {
                 duck.dragOffsetY = event.y - duck.y;
                 return true;
             } else if (this.measurementState.phase === 'weighing' && clickedOnDuck) {
-                this.resetToScale();
-                this.createFeedbackMessage('很好！繼續保持', duck.x + duck.width / 2, duck.y - 20, '#32CD32');
+                this.resetToCenter();
+                this.createFeedbackMessage('很好！', duck.x + duck.width / 2, duck.y - 20, '#32CD32');
                 return true;
             }
         } else if (event.type === 'mousemove' && this.dragSystem.isDragging) {
@@ -588,20 +566,14 @@ class WeightMeasurementGame extends MiniGame {
         return false;
     }
 
-    /**
-     * 檢查完成條件
-     */
     checkCompletion() {
         if (this.measurementState.measurementComplete) {
             this.complete(true);
         }
     }
 
-    /**
-     * 計算準確度獎勵
-     */
     calculateAccuracyBonus() {
-        return 20;
+        return Math.round(this.measurementState.currentScore * 0.2);
     }
 }
 
