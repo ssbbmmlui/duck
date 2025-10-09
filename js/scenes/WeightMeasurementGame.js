@@ -429,18 +429,24 @@ class WeightMeasurementGame extends MiniGame {
         }
 
         if (this.duckImage) {
+            context.save();
+
             if (this.dragSystem.isDragging) {
-                context.save();
                 context.globalAlpha = 0.8;
                 context.shadowColor = '#FFD700';
                 context.shadowBlur = 10;
             }
 
-            context.drawImage(this.duckImage, duck.x, duck.y, duck.width, duck.height);
-
-            if (this.dragSystem.isDragging) {
-                context.restore();
+            // Mirror the image when moving right (moveDirection = 1)
+            if (this.measurementState.phase === 'weighing' && duck.moveDirection === 1) {
+                context.translate(duck.x + duck.width, duck.y);
+                context.scale(-1, 1);
+                context.drawImage(this.duckImage, 0, 0, duck.width, duck.height);
+            } else {
+                context.drawImage(this.duckImage, duck.x, duck.y, duck.width, duck.height);
             }
+
+            context.restore();
         } else {
             context.fillStyle = this.dragSystem.isDragging ? '#FFE4B5' : '#F0F0F0';
             context.fillRect(duck.x, duck.y, duck.width, duck.height);
