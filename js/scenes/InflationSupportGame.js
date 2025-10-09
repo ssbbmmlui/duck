@@ -919,8 +919,9 @@ class InflationSupportGame extends MiniGame {
     checkCompletion() {
         // 當充氣完成且木棍已放置時，自動完成遊戲
         if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
-            console.log('遊戲條件達成，自動完成');
+            console.log('========== 遊戲條件達成，準備完成 ==========');
             console.log(`充氣完成: ${this.inflationCompleted}, 木棍放置: ${this.stickPlaced}, 進度: ${this.progress}`);
+            console.log(`onComplete回調存在: ${this.onComplete !== undefined}`);
 
             this.supportCompleted = true;
 
@@ -930,9 +931,9 @@ class InflationSupportGame extends MiniGame {
                 this.gameEngine.audioManager.playSound('success_sound');
             }
 
+            console.log('正在調用 complete(true)...');
             this.complete(true);
-        } else {
-            console.log(`檢查完成條件: 充氣=${this.inflationCompleted}, 木棍=${this.stickPlaced}, 完成=${this.isCompleted}, 進度=${this.progress.toFixed(2)}`);
+            console.log('complete(true) 調用完成');
         }
     }
 }
