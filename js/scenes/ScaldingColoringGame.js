@@ -198,7 +198,7 @@ class ScaldingColoringGame extends MiniGame {
             this.progressLabel.setText(`燙皮進度: ${Math.round(this.scalding.scaldingProgress)}%`);
         }
 
-        if (this.scalding.scaldingProgress >= 90 && !this.scaldingCompleted) {
+        if (this.scalding.scaldingProgress >= 95 && !this.scaldingCompleted) {
             this.scaldingCompleted = true;
             this.transitionToColoring();
         }
@@ -219,17 +219,9 @@ class ScaldingColoringGame extends MiniGame {
             this.progressLabel.setText(`塗抹進度: ${Math.round(this.coloring.coloringProgress)}%`);
         }
 
-        // Debug logging
-        if (this.coloring.coloringProgress > 0 && this.coloring.coloringProgress % 10 < 1) {
-            console.log(`上色進度: ${this.coloring.coloringProgress.toFixed(1)}%, 已塗抹: ${this.coloring.paintedCells}/${this.coloring.totalCells}, 完成標記: ${this.coloringCompleted}`);
-        }
-
-        if (this.coloring.coloringProgress >= 85 && !this.coloringCompleted) {
-            console.log(`達到完成條件! 進度: ${this.coloring.coloringProgress}%, 正在完成遊戲...`);
-            console.log(`onComplete callback 是否存在: ${!!this.onComplete}`);
+        if (this.coloring.coloringProgress >= 95 && !this.coloringCompleted) {
             this.coloringCompleted = true;
             setTimeout(() => {
-                console.log(`調用 complete(true)，onComplete: ${!!this.onComplete}`);
                 this.complete(true);
             }, 500);
         }
