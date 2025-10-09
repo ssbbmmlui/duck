@@ -78,39 +78,28 @@ class ScaldingColoringGame extends MiniGame {
         const cellWidth = this.duckEmbryo.width / gridCols;
         const cellHeight = this.duckEmbryo.height / gridRows;
 
-        const centerX = this.duckEmbryo.x + this.duckEmbryo.width / 2;
-        const centerY = this.duckEmbryo.y + this.duckEmbryo.height / 2;
-
         for (let row = 0; row < gridRows; row++) {
             for (let col = 0; col < gridCols; col++) {
                 const cellX = this.duckEmbryo.x + col * cellWidth;
                 const cellY = this.duckEmbryo.y + row * cellHeight;
-                const cellCenterX = cellX + cellWidth / 2;
-                const cellCenterY = cellY + cellHeight / 2;
 
-                const dx = (cellCenterX - centerX) / (this.duckEmbryo.width * 0.4);
-                const dy = (cellCenterY - (centerY + 10)) / (this.duckEmbryo.height * 0.4);
-                const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+                this.scalding.scaldingGrid.push({
+                    x: cellX,
+                    y: cellY,
+                    width: cellWidth,
+                    height: cellHeight,
+                    scalded: false,
+                    opacity: 0
+                });
 
-                if (distanceFromCenter <= 1.2) {
-                    this.scalding.scaldingGrid.push({
-                        x: cellX,
-                        y: cellY,
-                        width: cellWidth,
-                        height: cellHeight,
-                        scalded: false,
-                        opacity: 0
-                    });
-
-                    this.coloring.paintGrid.push({
-                        x: cellX,
-                        y: cellY,
-                        width: cellWidth,
-                        height: cellHeight,
-                        painted: false,
-                        opacity: 0
-                    });
-                }
+                this.coloring.paintGrid.push({
+                    x: cellX,
+                    y: cellY,
+                    width: cellWidth,
+                    height: cellHeight,
+                    painted: false,
+                    opacity: 0
+                });
             }
         }
 

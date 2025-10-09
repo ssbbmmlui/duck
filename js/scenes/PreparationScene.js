@@ -497,6 +497,11 @@ class PreparationScene extends Scene {
                         this.showLoadingForNextStep();
                     } else {
                         console.log('PreparationScene: 所有步驟完成，顯示進入下一場景按鈕');
+                        this.isLoading = false;
+                        if (this.currentMiniGame) {
+                            this.currentMiniGame.cleanup();
+                            this.currentMiniGame = null;
+                        }
                         this.showSceneUI();
                     }
                 }, 2000);
