@@ -1005,7 +1005,7 @@ class InflationSupportGame extends MiniGame {
     }
 
     /**
-     * 隱藏控制按鈕
+     * 隱藏控制按鈕和所有UI元素
      */
     hideControls() {
         // 隱藏返回按鈕
@@ -1015,6 +1015,26 @@ class InflationSupportGame extends MiniGame {
         // 隱藏跳過按鈕
         if (this.skipButton) {
             this.skipButton.visible = false;
+        }
+
+        // 隱藏所有UI標籤
+        if (this.phaseIndicator) {
+            this.phaseIndicator.setVisible(false);
+        }
+        if (this.inflationLabel) {
+            this.inflationLabel.setVisible(false);
+        }
+        if (this.pressureLabel) {
+            this.pressureLabel.setVisible(false);
+        }
+        if (this.optimalTimeLabel) {
+            this.optimalTimeLabel.setVisible(false);
+        }
+        if (this.accuracyLabel) {
+            this.accuracyLabel.setVisible(false);
+        }
+        if (this.progressLabel) {
+            this.progressLabel.setVisible(false);
         }
     }
 }
