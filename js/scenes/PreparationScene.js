@@ -515,14 +515,36 @@ class PreparationScene extends Scene {
                             this.currentMiniGame.cleanup();
                             this.currentMiniGame = null;
                         }
+
+                        // 確保場景UI顯示
                         this.showSceneUI();
+
+                        // 強制更新按鈕狀態
+                        if (this.nextButton) {
+                            this.nextButton.setVisible(true);
+                            this.nextButton.setEnabled(true);
+                        }
+
+                        // 顯示製胚完成消息
+                        const uiManager = this.gameEngine.uiManager;
+                        const canvas = this.gameEngine.canvas;
+                        uiManager.createDismissibleMessage({
+                            text: '🎉 製胚階段完成！\n\n充氣支撐和燙皮上色都已完成\n鴨胚已準備就緒\n\n點擊按鈕進入晾胚階段',
+                            x: canvas.width / 2,
+                            y: canvas.height / 2 - 80,
+                            fontSize: 20,
+                            color: '#228B22',
+                            autoDismissTime: 6000
+                        });
+
                         console.log('按鈕狀態:', {
                             text: this.nextButton ? this.nextButton.text : 'null',
                             visible: this.nextButton ? this.nextButton.visible : 'null',
-                            enabled: this.nextButton ? this.nextButton.enabled : 'null'
+                            enabled: this.nextButton ? this.nextButton.enabled : 'null',
+                            onClick: this.nextButton ? (this.nextButton.onClick ? 'set' : 'null') : 'null'
                         });
                     }
-                }, 2000);
+                }, 1500);
             }
         } else {
             // 失敗時允許重試
