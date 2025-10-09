@@ -494,9 +494,6 @@ class PreparationScene extends Scene {
                 // 更新進度管理器
                 this.gameEngine.progressManager.completeStep(stepId);
 
-                // 顯示成功消息
-                this.showSuccessMessage(step.name, stats.score);
-
                 // 移動到下一步驟
                 this.currentStepIndex++;
                 this.updateStepIndicator();
@@ -526,10 +523,10 @@ class PreparationScene extends Scene {
                         }
 
                         // 顯示製胚完成消息
-                        const visualFeedback = this.gameEngine.visualFeedback;
-                        if (visualFeedback) {
-                            visualFeedback.showMessage('製胚階段完成！充氣支撐和燙皮上色都已完成，點擊按鈕進入晾胚階段', 'success');
-                        }
+                        console.log('製胚階段完成！充氣支撐和燙皮上色都已完成，點擊按鈕進入晾胚階段');
+
+                        // 顯示成功消息（在UI已經顯示之後）
+                        this.showSuccessMessage(step.name, stats.score);
 
                         console.log('按鈕狀態:', {
                             text: this.nextButton ? this.nextButton.text : 'null',
@@ -624,10 +621,7 @@ class PreparationScene extends Scene {
      * 顯示成功消息
      */
     showSuccessMessage(stepName, score) {
-        const visualFeedback = this.gameEngine.visualFeedback;
-        if (visualFeedback) {
-            visualFeedback.showMessage(`${stepName}完成！獲得分數: ${score}`, 'success');
-        }
+        console.log(`${stepName}完成！獲得分數: ${score}`);
 
         if (this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');
@@ -638,10 +632,7 @@ class PreparationScene extends Scene {
      * 顯示重試消息
      */
     showRetryMessage() {
-        const visualFeedback = this.gameEngine.visualFeedback;
-        if (visualFeedback) {
-            visualFeedback.showMessage('製胚需要精確技巧，請再試一次', 'error');
-        }
+        console.log('製胚需要精確技巧，請再試一次');
         setTimeout(() => {
             this.showSceneUI();
         }, 2000);
