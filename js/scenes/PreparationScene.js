@@ -1047,6 +1047,8 @@ class PreparationScene extends Scene {
      * 顯示場景UI元素
      */
     showSceneUI() {
+        console.log('showSceneUI called, currentStepIndex:', this.currentStepIndex, 'total steps:', this.preparationSteps.length);
+
         if (this.titleLabel) this.titleLabel.setVisible(true);
         if (this.instructionLabel) this.instructionLabel.setVisible(true);
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
@@ -1054,7 +1056,21 @@ class PreparationScene extends Scene {
 
         // 更新按鈕狀態和文字
         this.updateNextButton();
-        if (this.nextButton) this.nextButton.setVisible(true);
+
+        if (this.nextButton) {
+            console.log('Setting nextButton visible, text:', this.nextButton.text);
+            this.nextButton.setVisible(true);
+            this.nextButton.setEnabled(true);
+            console.log('nextButton after show:', {
+                visible: this.nextButton.visible,
+                enabled: this.nextButton.enabled,
+                x: this.nextButton.x,
+                y: this.nextButton.y,
+                text: this.nextButton.text
+            });
+        } else {
+            console.error('nextButton is null!');
+        }
 
         // 只在當前步驟有教育內容時顯示教育按鈕
         if (this.educationButton && this.currentStepIndex < this.preparationSteps.length) {
