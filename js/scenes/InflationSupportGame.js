@@ -329,18 +329,34 @@ class InflationSupportGame extends MiniGame {
      * 檢查階段轉換
      */
     checkPhaseTransition() {
-        if (this.gamePhase === 'inflation' && 
-            this.inflationLevel >= this.targetInflationLevel && 
+        if (this.gamePhase === 'inflation' &&
+            this.inflationLevel >= this.targetInflationLevel &&
             !this.inflationCompleted) {
-            
+
             this.inflationCompleted = true;
             this.gamePhase = 'support_placement';
-            
+
             // 更新說明
             if (this.instructions) {
                 this.instructions.setText(this.getInstructions());
             }
-            
+
+            // 顯示階段完成提示
+            if (this.gameEngine && this.gameEngine.uiManager) {
+                const phaseCompleteLabel = this.gameEngine.uiManager.createLabel({
+                    x: this.gameArea.x + this.gameArea.width / 2,
+                    y: this.gameArea.y + 50,
+                    text: '✓ 充氣完成！現在拖拽木棍到目標位置',
+                    fontSize: 18,
+                    color: '#32CD32',
+                    align: 'center'
+                });
+
+                setTimeout(() => {
+                    this.gameEngine.uiManager.removeUIElement(phaseCompleteLabel);
+                }, 3000);
+            }
+
             console.log('充氣完成，進入支撐放置階段');
         }
     }
@@ -541,21 +557,33 @@ class InflationSupportGame extends MiniGame {
      */
     renderSupportStick(context) {
         const stick = this.supportStick;
-        
+
+        // 只在支撐放置階段顯示木棍
+        if (this.gamePhase !== 'support_placement') return;
+
         // 設置顏色
         let stickColor = '#8B4513';
-        if (this.gamePhase === 'support_placement') {
-            if (stick.isDragging) {
-                stickColor = '#FF8C00';
-            } else if (stick.isPlaced) {
-                stickColor = '#32CD32';
-            }
+        if (stick.isDragging) {
+            stickColor = '#FF8C00';
+        } else if (stick.isPlaced) {
+            stickColor = '#32CD32';
         }
-        
+
+        // 繪製高亮效果（如果未放置）
+        if (!stick.isPlaced && !stick.isDragging) {
+            const pulse = Math.sin(Date.now() * 0.003) * 0.3 + 0.7;
+            context.save();
+            context.globalAlpha = pulse;
+            context.strokeStyle = '#FFD700';
+            context.lineWidth = 4;
+            context.strokeRect(stick.x - 2, stick.y - 2, stick.width + 4, stick.height + 4);
+            context.restore();
+        }
+
         if (this.stickImage) {
             context.save();
             context.translate(stick.x + stick.width / 2, stick.y + stick.height / 2);
-            context.rotate(Math.PI / 2); // 橫向放置
+            context.rotate(Math.PI / 2);
             context.drawImage(
                 this.stickImage,
                 -stick.height / 2,
@@ -568,21 +596,21 @@ class InflationSupportGame extends MiniGame {
             // 繪製佔位符
             context.fillStyle = stickColor;
             context.fillRect(stick.x, stick.y, stick.width, stick.height);
-            
+
             context.strokeStyle = '#654321';
-            context.lineWidth = 1;
+            context.lineWidth = 2;
             context.strokeRect(stick.x, stick.y, stick.width, stick.height);
         }
-        
-        // 繪製拖拽提示
-        if (this.gamePhase === 'support_placement' && !stick.isPlaced) {
-            context.fillStyle = '#654321';
-            context.font = '12px Microsoft JhengHei';
+
+        // 繪製拖拽提示（更明顯）
+        if (!stick.isPlaced) {
+            context.fillStyle = '#FF4500';
+            context.font = 'bold 14px Microsoft JhengHei';
             context.textAlign = 'center';
             context.fillText(
-                '拖拽到目標位置',
+                '👆 拖拽到目標位置',
                 stick.x + stick.width / 2,
-                stick.y + stick.height + 20
+                stick.y - 10
             );
         }
     }
@@ -661,35 +689,56 @@ class InflationSupportGame extends MiniGame {
      */
     renderTargetIndicator(context) {
         if (this.gamePhase !== 'support_placement' || this.supportStick.isPlaced) return;
-        
+
         const target = this.supportStick;
-        
-        // 繪製目標位置
+
+        // 繪製目標位置（動畫效果）
+        const pulse = Math.sin(Date.now() * 0.005) * 0.2 + 0.8;
         context.save();
-        context.globalAlpha = 0.6;
+        context.globalAlpha = pulse;
         context.strokeStyle = '#32CD32';
-        context.lineWidth = 3;
+        context.lineWidth = 4;
         context.setLineDash([10, 5]);
-        
+
+        // 繪製目標框
         context.strokeRect(
             target.targetX - 5,
             target.targetY - 5,
             target.width + 10,
             target.height + 10
         );
-        
+
+        // 繪製內部填充（半透明）
+        context.fillStyle = 'rgba(50, 205, 50, 0.2)';
+        context.fillRect(
+            target.targetX - 5,
+            target.targetY - 5,
+            target.width + 10,
+            target.height + 10
+        );
+
         context.setLineDash([]);
         context.restore();
-        
-        // 繪製目標標籤
+
+        // 繪製目標標籤（更明顯）
         context.fillStyle = '#32CD32';
-        context.font = '12px Microsoft JhengHei';
+        context.font = 'bold 16px Microsoft JhengHei';
         context.textAlign = 'center';
         context.fillText(
-            '目標位置',
+            '🎯 目標位置',
             target.targetX + target.width / 2,
-            target.targetY - 10
+            target.targetY - 15
         );
+
+        // 繪製箭頭指示
+        context.strokeStyle = '#32CD32';
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(target.targetX + target.width / 2, target.targetY - 25);
+        context.lineTo(target.targetX + target.width / 2 - 5, target.targetY - 15);
+        context.moveTo(target.targetX + target.width / 2, target.targetY - 25);
+        context.lineTo(target.targetX + target.width / 2 + 5, target.targetY - 15);
+        context.stroke();
     }
 
     /**
