@@ -454,13 +454,22 @@ class PreparationScene extends Scene {
                 this.onStepComplete(stepId, success, stats);
             }
         } else {
+            // 清理迷你遊戲
+            if (this.currentMiniGame) {
+                this.currentMiniGame.cleanup();
+                this.currentMiniGame = null;
+            }
             // 顯示場景UI
+            this.isLoading = false;
             this.showSceneUI();
             // 失敗時允許重試
             this.showRetryMessage();
         }
 
-        this.currentMiniGame = null;
+        // 清理迷你遊戲引用
+        if (this.currentMiniGame) {
+            this.currentMiniGame = null;
+        }
     }
 
     /**
@@ -503,6 +512,11 @@ class PreparationScene extends Scene {
                             this.currentMiniGame = null;
                         }
                         this.showSceneUI();
+                        console.log('按鈕狀態:', {
+                            text: this.nextButton ? this.nextButton.text : 'null',
+                            visible: this.nextButton ? this.nextButton.visible : 'null',
+                            enabled: this.nextButton ? this.nextButton.enabled : 'null'
+                        });
                     }
                 }, 2000);
             }
