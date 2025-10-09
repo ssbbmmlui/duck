@@ -417,6 +417,11 @@ class InflationSupportGame extends MiniGame {
         if (this.config.onProgressUpdate) {
             this.config.onProgressUpdate(this.inflationLevel);
         }
+
+        // 檢查是否可以自動完成
+        if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
+            this.checkCompletion();
+        }
     }
 
     /**
@@ -861,7 +866,7 @@ class InflationSupportGame extends MiniGame {
 
             if (this.gamePhase === 'support_placement' && !this.stickPlaced) {
                 this.stickPlaced = true;
-                this.showCompletionButton();
+                console.log('木棍已放置，標記為完成');
             }
 
             return true;
@@ -888,14 +893,14 @@ class InflationSupportGame extends MiniGame {
      */
     calculateAccuracyBonus() {
         let bonus = 0;
-        
+
         // 充氣精確度獎勵
         const inflationAccuracy = Math.max(0, 100 - Math.abs(this.inflationLevel - this.targetInflationLevel));
         bonus += Math.round(inflationAccuracy * 0.3);
-        
+
         // 支撐放置精確度獎勵
         bonus += Math.round(this.supportStick.placementAccuracy * 0.4);
-        
+
         // 時間獎勵
         const gameTime = this.stats.endTime - this.stats.startTime;
         if (gameTime < 60000) { // 60秒內完成
@@ -903,61 +908,27 @@ class InflationSupportGame extends MiniGame {
         } else if (gameTime < 75000) { // 75秒內完成
             bonus += 15;
         }
-        
+
         return bonus;
-    }
-
-    /**
-     * 顯示完成按鈕
-     */
-    showCompletionButton() {
-        if (!this.completionButton && this.gameEngine && this.gameEngine.uiManager) {
-            const centerX = this.gameArea ? this.gameArea.x + this.gameArea.width / 2 : 400;
-            const bottomY = this.gameArea ? this.gameArea.y + this.gameArea.height - 40 : 440;
-
-            this.completionButton = this.gameEngine.uiManager.createButton({
-                x: centerX - 50,
-                y: bottomY,
-                width: 100,
-                height: 35,
-                text: '完成',
-                onClick: () => {
-                    this.completeGame();
-                },
-                backgroundColor: '#32CD32',
-                hoverColor: '#28A745',
-                textColor: '#FFFFFF'
-            });
-
-            this.uiElements.push(this.completionButton);
-        }
-    }
-
-    /**
-     * 完成遊戲
-     */
-    completeGame() {
-        console.log('completeGame() 被調用');
-
-        this.supportCompleted = true;
-        this.updateTotalProgress();
-
-        console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
-        console.log(`當前progress值: ${this.progress}, isCompleted: ${this.isCompleted}`);
-
-        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.settings.soundEnabled) {
-            this.gameEngine.audioManager.playSound('success_sound');
-        }
-
-        console.log('準備調用 complete(true)');
-        this.complete(true);
     }
 
     /**
      * 檢查遊戲完成條件
      */
     checkCompletion() {
-        // 不再自動檢查完成，需要玩家點擊完成按鈕
+        // 當充氣完成且木棍已放置時，自動完成遊戲
+        if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
+            console.log('遊戲條件達成，自動完成');
+            this.supportCompleted = true;
+
+            console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
+
+            if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.settings.soundEnabled) {
+                this.gameEngine.audioManager.playSound('success_sound');
+            }
+
+            this.complete(true);
+        }
     }
 }
 // 匯出到全域作用域
