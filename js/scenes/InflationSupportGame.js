@@ -819,8 +819,10 @@ class InflationSupportGame extends MiniGame {
     /**
      * 檢查遊戲完成條件
      */
-    checkWinCondition() {
-        return this.inflationCompleted && this.supportCompleted;
+    checkCompletion() {
+        if (this.inflationCompleted && this.supportCompleted && !this.isCompleted) {
+            this.complete(true);
+        }
     }
 }
 // 匯出到全域作用域
