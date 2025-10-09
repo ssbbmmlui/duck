@@ -51,7 +51,7 @@ class InflationSupportGame extends MiniGame {
         this.inflationPump = {
             x: this.gameArea ? this.gameArea.x + 50 : 100,
             y: this.gameArea ? this.gameArea.y + this.gameArea.height - 120 : 400,
-            width: 60,
+            width: 80,
             height: 80,
             isActive: false,
             pumpAnimation: 0
