@@ -440,6 +440,7 @@ class PreparationScene extends Scene {
     onMiniGameComplete(success, stats) {
         const gameName = this.currentMiniGame ? this.currentMiniGame.name : '未知遊戲';
         console.log(`${gameName}完成:`, success ? '成功' : '失敗');
+        console.log('currentMiniGame before cleanup:', this.currentMiniGame ? 'exists' : 'null');
 
         if (success) {
             // 根據遊戲名稱確定步驟ID
@@ -451,6 +452,14 @@ class PreparationScene extends Scene {
             }
 
             if (stepId) {
+                // 立即清理迷你遊戲並設置為null
+                if (this.currentMiniGame) {
+                    console.log('Cleaning up mini-game immediately after completion');
+                    this.currentMiniGame.cleanup();
+                    this.currentMiniGame = null;
+                }
+                console.log('currentMiniGame after cleanup:', this.currentMiniGame ? 'exists' : 'null');
+
                 this.onStepComplete(stepId, success, stats);
             }
         } else {
@@ -464,11 +473,6 @@ class PreparationScene extends Scene {
             this.showSceneUI();
             // 失敗時允許重試
             this.showRetryMessage();
-        }
-
-        // 清理迷你遊戲引用
-        if (this.currentMiniGame) {
-            this.currentMiniGame = null;
         }
     }
 
