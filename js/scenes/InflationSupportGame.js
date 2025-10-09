@@ -974,6 +974,16 @@ class InflationSupportGame extends MiniGame {
             // 標記當前步驟完成
             scene.gameEngine.progressManager.completeStep('inflation_support');
 
+            // 標記inflation_support步驟為完成
+            const inflationStep = scene.preparationSteps.find(s => s.id === 'inflation_support');
+            if (inflationStep) {
+                inflationStep.completed = true;
+            }
+
+            // 移動到下一步驟（scalding_coloring）
+            scene.currentStepIndex++;
+            scene.updateStepIndicator();
+
             // 創建並啟動燙皮上糖色遊戲
             const coloringGame = new window.ScaldingColoringGame({
                 gameEngine: this.gameEngine,
