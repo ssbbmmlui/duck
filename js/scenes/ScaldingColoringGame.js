@@ -219,7 +219,7 @@ class ScaldingColoringGame extends MiniGame {
             this.progressLabel.setText(`塗抹進度: ${Math.round(this.coloring.coloringProgress)}%`);
         }
 
-        if (this.coloring.coloringProgress >= 95 && !this.coloringCompleted) {
+        if (this.coloring.coloringProgress >= 100 && !this.coloringCompleted) {
             this.coloringCompleted = true;
             setTimeout(() => {
                 this.complete(true);

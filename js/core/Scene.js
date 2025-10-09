@@ -334,8 +334,6 @@ class SceneManager {
      * 切換場景
      */
     async changeScene(sceneName) {
-        console.log(`SceneManager.changeScene() 被調用，目標場景: "${sceneName}"`);
-
         if (this.isTransitioning) {
             console.warn('場景切換進行中，忽略新的切換請求');
             return;
@@ -348,22 +346,18 @@ class SceneManager {
             return;
         }
 
-        console.log(`找到場景類別: ${SceneClass.name}`);
         this.isTransitioning = true;
 
         try {
-            console.log(`創建新場景實例: ${sceneName}`);
             const newScene = new SceneClass(sceneName, this.gameEngine);
             newScene.isActive = true;
             newScene.isLoading = true;
 
             if (this.currentScene) {
-                console.log(`離開當前場景: ${this.currentScene.name}`);
                 await this.currentScene.exit();
             }
 
             this.currentScene = newScene;
-            console.log(`進入新場景: ${sceneName}`);
             await this.currentScene.enter();
 
             this.gameEngine.updateGameState({ currentScene: sceneName });

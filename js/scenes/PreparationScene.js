@@ -489,15 +489,15 @@ class PreparationScene extends Scene {
                 this.updateStepIndicator();
                 this.updateNextButton();
 
-                // 自動開始下一個步驟或進入下一場景
+                // 自動開始下一個步驟或顯示場景UI
                 setTimeout(() => {
                     console.log(`檢查步驟完成狀態: ${this.currentStepIndex}/${this.preparationSteps.length}`);
                     if (this.currentStepIndex < this.preparationSteps.length) {
                         console.log('自動開始下一個步驟');
                         this.showLoadingForNextStep();
                     } else {
-                        console.log('PreparationScene: 所有步驟完成，調用 proceedToNextScene()');
-                        this.proceedToNextScene();
+                        console.log('PreparationScene: 所有步驟完成，顯示進入下一場景按鈕');
+                        this.showSceneUI();
                     }
                 }, 2000);
             }
@@ -630,12 +630,8 @@ class PreparationScene extends Scene {
      * 進入下一個場景
      */
     proceedToNextScene() {
-        console.log('PreparationScene.proceedToNextScene() 被調用');
-        console.log('準備轉換到 DryingScene (drying)');
-        console.log('GameEngine:', this.gameEngine);
-        console.log('SceneManager:', this.gameEngine?.sceneManager);
+        console.log('製胚階段完成，進入晾胚階段');
         this.transitionToScene('drying');
-        console.log('transitionToScene("drying") 已調用');
     }
 
     /**
