@@ -441,9 +441,6 @@ class PreparationScene extends Scene {
         const gameName = this.currentMiniGame ? this.currentMiniGame.name : '未知遊戲';
         console.log(`${gameName}完成:`, success ? '成功' : '失敗');
 
-        // 顯示場景UI
-        this.showSceneUI();
-
         if (success) {
             // 根據遊戲名稱確定步驟ID
             let stepId = '';
@@ -457,6 +454,8 @@ class PreparationScene extends Scene {
                 this.onStepComplete(stepId, success, stats);
             }
         } else {
+            // 顯示場景UI
+            this.showSceneUI();
             // 失敗時允許重試
             this.showRetryMessage();
         }
@@ -497,6 +496,7 @@ class PreparationScene extends Scene {
                         this.showLoadingForNextStep();
                     } else {
                         console.log('所有步驟完成，準備進入下一場景');
+                        this.showSceneUI();
                     }
                 }, 1500);
             }
