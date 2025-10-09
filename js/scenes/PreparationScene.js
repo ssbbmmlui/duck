@@ -441,9 +441,6 @@ class PreparationScene extends Scene {
         const gameName = this.currentMiniGame ? this.currentMiniGame.name : '未知遊戲';
         console.log(`${gameName}完成:`, success ? '成功' : '失敗');
 
-        // 顯示場景UI
-        this.showSceneUI();
-        
         if (success) {
             // 根據遊戲名稱確定步驟ID
             let stepId = '';
@@ -452,7 +449,7 @@ class PreparationScene extends Scene {
             } else if (gameName === '燙皮上糖色遊戲') {
                 stepId = 'scalding_coloring';
             }
-            
+
             if (stepId) {
                 this.onStepComplete(stepId, success, stats);
             }
@@ -460,7 +457,10 @@ class PreparationScene extends Scene {
             // 失敗時允許重試
             this.showRetryMessage();
         }
-        
+
+        // 顯示場景UI (在處理完成後顯示，確保按鈕文字已更新)
+        this.showSceneUI();
+
         this.currentMiniGame = null;
     }
 
@@ -940,8 +940,11 @@ class PreparationScene extends Scene {
         if (this.titleLabel) this.titleLabel.setVisible(true);
         if (this.instructionLabel) this.instructionLabel.setVisible(true);
         if (this.stepIndicator) this.stepIndicator.setVisible(true);
-        if (this.nextButton) this.nextButton.setVisible(true);
         if (this.backButton) this.backButton.setVisible(true);
+
+        // 更新按鈕狀態和文字
+        this.updateNextButton();
+        if (this.nextButton) this.nextButton.setVisible(true);
 
         // 只在當前步驟有教育內容時顯示教育按鈕
         if (this.educationButton && this.currentStepIndex < this.preparationSteps.length) {
