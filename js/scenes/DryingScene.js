@@ -437,26 +437,46 @@ class DryingScene extends Scene {
      */
     showEducationPanel(content) {
         this.showingEducation = true;
+
+        // 隱藏所有場景UI元素
+        this.hideSceneUI();
+
         const uiManager = this.gameEngine.uiManager;
         const canvas = this.gameEngine.canvas;
+
+        // 分割內容為兩列
+        const lines = content.content.split('\n').filter(line => line.trim());
+        const midpoint = Math.ceil(lines.length / 2);
+        const leftColumn = lines.slice(0, midpoint).join('\n');
+        const rightColumn = lines.slice(midpoint).join('\n');
 
         // 創建教育面板
         this.educationPanel = {
             title: uiManager.createLabel({
                 x: canvas.width / 2,
-                y: 120,
+                y: 135,
                 text: content.title,
                 fontSize: 20,
                 color: '#FFD700',
                 align: 'center'
             }),
-            content: uiManager.createLabel({
-                x: 80,
-                y: 160,
-                text: content.content,
-                fontSize: 14,
+            leftContent: uiManager.createLabel({
+                x: 110,
+                y: 175,
+                text: leftColumn,
+                fontSize: 13,
                 color: '#FFFFFF',
-                align: 'left'
+                align: 'left',
+                maxWidth: (canvas.width - 160) / 2 - 20
+            }),
+            rightContent: uiManager.createLabel({
+                x: canvas.width / 2 + 30,
+                y: 175,
+                text: rightColumn,
+                fontSize: 13,
+                color: '#FFFFFF',
+                align: 'left',
+                maxWidth: (canvas.width - 160) / 2 - 20
             }),
             closeButton: uiManager.createButton({
                 x: canvas.width / 2 - 40,
@@ -491,6 +511,9 @@ class DryingScene extends Scene {
         });
 
         this.educationPanel = null;
+
+        // 恢復顯示場景UI
+        this.showSceneUI();
     }
 
     /**
@@ -1290,34 +1313,52 @@ class DryingScene extends Scene {
      * 渲染教育面板背景
      */
     renderEducationPanelBackground(context) {
-        // 繪製半透明背景
-        context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-        context.fillRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
+        // 繪製全螢幕暗色遮罩以隱藏後面的內容
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // 繪製教育面板背景
+        const panelX = 60;
+        const panelY = 110;
+        const panelWidth = context.canvas.width - 120;
+        const panelHeight = context.canvas.height - 180;
+
+        context.fillStyle = 'rgba(20, 20, 20, 0.95)';
+        context.fillRect(panelX, panelY, panelWidth, panelHeight);
+
         // 繪製邊框
         context.strokeStyle = '#FFD700';
         context.lineWidth = 3;
-        context.strokeRect(40, 110, context.canvas.width - 80, context.canvas.height - 180);
-        
+        context.strokeRect(panelX, panelY, panelWidth, panelHeight);
+
+        // 繪製中間分隔線（兩列之間）
+        const midX = context.canvas.width / 2;
+        context.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(midX, panelY + 50);
+        context.lineTo(midX, panelY + panelHeight - 80);
+        context.stroke();
+
         // 繪製裝飾角落
         const cornerSize = 20;
         context.fillStyle = '#FFD700';
-        
+
         // 左上角
-        context.fillRect(40, 110, cornerSize, 3);
-        context.fillRect(40, 110, 3, cornerSize);
-        
+        context.fillRect(panelX, panelY, cornerSize, 3);
+        context.fillRect(panelX, panelY, 3, cornerSize);
+
         // 右上角
-        context.fillRect(context.canvas.width - 60 - cornerSize, 110, cornerSize, 3);
-        context.fillRect(context.canvas.width - 43, 110, 3, cornerSize);
-        
+        context.fillRect(panelX + panelWidth - cornerSize, panelY, cornerSize, 3);
+        context.fillRect(panelX + panelWidth - 3, panelY, 3, cornerSize);
+
         // 左下角
-        context.fillRect(40, context.canvas.height - 73, cornerSize, 3);
-        context.fillRect(40, context.canvas.height - 90, 3, cornerSize);
-        
+        context.fillRect(panelX, panelY + panelHeight - 3, cornerSize, 3);
+        context.fillRect(panelX, panelY + panelHeight - cornerSize, 3, cornerSize);
+
         // 右下角
-        context.fillRect(context.canvas.width - 60 - cornerSize, context.canvas.height - 73, cornerSize, 3);
-        context.fillRect(context.canvas.width - 43, context.canvas.height - 90, 3, cornerSize);
+        context.fillRect(panelX + panelWidth - cornerSize, panelY + panelHeight - 3, cornerSize, 3);
+        context.fillRect(panelX + panelWidth - 3, panelY + panelHeight - cornerSize, 3, cornerSize);
     }
 
     /**
