@@ -937,18 +937,20 @@ class InflationSupportGame extends MiniGame {
      * 完成遊戲
      */
     completeGame() {
+        console.log('completeGame() 被調用');
+
         this.supportCompleted = true;
         this.updateTotalProgress();
 
         console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
+        console.log(`當前progress值: ${this.progress}, isCompleted: ${this.isCompleted}`);
 
-        if (this.gameEngine.gameState.settings.soundEnabled) {
+        if (this.gameEngine && this.gameEngine.gameState && this.gameEngine.gameState.settings.soundEnabled) {
             this.gameEngine.audioManager.playSound('success_sound');
         }
 
-        requestAnimationFrame(() => {
-            this.complete(true);
-        });
+        console.log('準備調用 complete(true)');
+        this.complete(true);
     }
 
     /**
