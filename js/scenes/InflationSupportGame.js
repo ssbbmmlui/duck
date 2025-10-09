@@ -20,6 +20,8 @@ class InflationSupportGame extends MiniGame {
         this.inflationPressure = 0; // 當前壓力
         this.maxPressure = 100;
         this.optimalPressureRange = { min: 70, max: 90 };
+        this.optimalPressureTime = 0; // 保持在最佳壓力的時間（秒）
+        this.requiredOptimalTime = 5; // 需要維持5秒
         
         // 支撐系統
         this.supportStick = {
@@ -101,6 +103,7 @@ class InflationSupportGame extends MiniGame {
         this.inflationCompleted = false;
         this.supportCompleted = false;
         this.stickPlaced = false;
+        this.optimalPressureTime = 0;
         this.supportStick.isPlaced = false;
         this.supportStick.isDragging = false;
         this.airParticles = [];
@@ -180,12 +183,23 @@ class InflationSupportGame extends MiniGame {
             color: '#FF8C00',
             align: 'left'
         });
-        
+
+        // 創建最佳壓力計時器標籤
+        this.optimalTimeLabel = uiManager.createLabel({
+            x: this.gameArea.x + 20,
+            y: this.gameArea.y + 110,
+            text: `最佳壓力時間: 0.0 / 5.0秒`,
+            fontSize: 14,
+            color: '#4169E1',
+            align: 'left'
+        });
+
         this.uiElements.push(
             this.phaseIndicator,
             this.pressureLabel,
             this.inflationLabel,
-            this.accuracyLabel
+            this.accuracyLabel,
+            this.optimalTimeLabel
         );
     }
 
@@ -217,41 +231,52 @@ class InflationSupportGame extends MiniGame {
      */
     updateInflationSystem(deltaTime) {
         if (this.gamePhase !== 'inflation' && !this.isInflating) return;
-        
+
         if (this.isInflating) {
             // 充氣中
             this.inflationPressure += this.inflationRate * deltaTime / 16;
             this.inflationPressure = Math.min(this.inflationPressure, this.maxPressure);
-            
+
             // 根據壓力增加充氣水平
             if (this.inflationPressure >= this.optimalPressureRange.min) {
                 this.inflationLevel += (this.inflationRate * 0.8) * deltaTime / 16;
             }
-            
+
             // 創建空氣粒子效果
             if (Math.random() < 0.3) {
                 this.createAirParticle();
             }
-            
+
             // 更新充氣泵動畫
             this.inflationPump.pumpAnimation += deltaTime * 0.01;
             this.inflationPump.isActive = true;
-            
+
         } else {
             // 自然洩氣
             this.inflationPressure -= this.deflationRate * deltaTime / 16;
             this.inflationPressure = Math.max(0, this.inflationPressure);
-            
+
             this.inflationPump.isActive = false;
             this.inflationPump.pumpAnimation = 0;
         }
-        
+
         // 限制充氣水平
         this.inflationLevel = Math.min(this.inflationLevel, 100);
-        
+
         // 計算膨脹效果
         this.duckEmbryo.inflationExpansion = (this.inflationLevel / 100) * 20;
-        
+
+        // 檢查壓力是否在最佳範圍內
+        if (this.inflationPressure >= this.optimalPressureRange.min &&
+            this.inflationPressure <= this.optimalPressureRange.max &&
+            !this.inflationCompleted) {
+            // 在最佳範圍內，累積時間
+            this.optimalPressureTime += deltaTime / 1000;
+        } else if (!this.inflationCompleted) {
+            // 不在最佳範圍內，重置計時
+            this.optimalPressureTime = 0;
+        }
+
         // 檢查過度充氣
         if (this.inflationLevel > 95) {
             this.handleOverInflation();
@@ -304,13 +329,28 @@ class InflationSupportGame extends MiniGame {
             const phaseText = this.gamePhase === 'inflation' ? '充氣' : '支撐放置';
             this.phaseIndicator.setText(`階段: ${phaseText}`);
         }
-        
+
         if (this.inflationLabel) {
             this.inflationLabel.setText(`充氣水平: ${Math.round(this.inflationLevel)}%`);
         }
-        
+
         if (this.accuracyLabel) {
             this.accuracyLabel.setText(`支撐精確度: ${Math.round(this.supportStick.placementAccuracy)}%`);
+        }
+
+        if (this.optimalTimeLabel) {
+            const timeText = this.optimalPressureTime.toFixed(1);
+            const requiredText = this.requiredOptimalTime.toFixed(1);
+            const isOptimal = this.inflationPressure >= this.optimalPressureRange.min &&
+                             this.inflationPressure <= this.optimalPressureRange.max;
+
+            if (this.gamePhase === 'inflation') {
+                this.optimalTimeLabel.setText(`最佳壓力時間: ${timeText} / ${requiredText}秒`);
+                this.optimalTimeLabel.setColor(isOptimal ? '#32CD32' : '#FF6347');
+                this.optimalTimeLabel.setVisible(true);
+            } else {
+                this.optimalTimeLabel.setVisible(false);
+            }
         }
     }
 
@@ -318,8 +358,9 @@ class InflationSupportGame extends MiniGame {
      * 檢查階段轉換
      */
     checkPhaseTransition() {
+        // 檢查是否在最佳壓力範圍內維持了足夠時間
         if (this.gamePhase === 'inflation' &&
-            this.inflationLevel >= 10 &&
+            this.optimalPressureTime >= this.requiredOptimalTime &&
             !this.inflationCompleted) {
 
             this.inflationCompleted = true;
@@ -356,13 +397,19 @@ class InflationSupportGame extends MiniGame {
     updateTotalProgress() {
         let totalProgress = 0;
 
-        // 充氣進度 (70%) - 基於0-100%的充氣水平
-        const inflationProgress = (this.inflationLevel / 100) * 0.7;
-        totalProgress += inflationProgress;
+        // 充氣進度 (70%) - 基於維持最佳壓力的時間
+        if (this.inflationCompleted) {
+            totalProgress += 0.7; // 充氣完成貢獻70%
+        } else {
+            // 根據維持時間計算進度
+            const inflationProgress = Math.min(this.optimalPressureTime / this.requiredOptimalTime, 1) * 0.7;
+            totalProgress += inflationProgress;
+        }
 
-        // 支撐進度 (30%)
-        const supportProgress = (this.supportStick.placementAccuracy / 100) * 0.3;
-        totalProgress += supportProgress;
+        // 支撐進度 (30%) - 只要放置就貢獻30%，不管精確度
+        if (this.stickPlaced || this.supportCompleted) {
+            totalProgress += 0.3;
+        }
 
         this.updateProgress(totalProgress);
 
