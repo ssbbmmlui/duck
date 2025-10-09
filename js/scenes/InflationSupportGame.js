@@ -261,28 +261,36 @@ class InflationSupportGame extends MiniGame {
      */
     updateSupportSystem(deltaTime) {
         if (this.gamePhase !== 'support_placement') return;
-        
+
         // 計算支撐木棍的放置精確度
         if (!this.supportStick.isDragging) {
             const distance = Math.sqrt(
                 Math.pow(this.supportStick.x - this.supportStick.targetX, 2) +
                 Math.pow(this.supportStick.y - this.supportStick.targetY, 2)
             );
-            
+
             const maxDistance = 50; // 最大允許距離
-            this.supportStick.placementAccuracy = Math.max(0, 
+            this.supportStick.placementAccuracy = Math.max(0,
                 100 - (distance / maxDistance) * 100
             );
-            
+
             // 檢查是否放置正確
             if (this.supportStick.placementAccuracy >= 80 && !this.supportStick.isPlaced) {
                 this.supportStick.isPlaced = true;
                 this.supportCompleted = true;
-                
+
                 // 播放成功音效
                 if (this.gameEngine.gameState.settings.soundEnabled) {
                     this.gameEngine.audioManager.playSound('success_sound');
                 }
+
+                // 延遲完成遊戲，讓玩家看到完成效果
+                setTimeout(() => {
+                    if (this.inflationCompleted && this.supportCompleted) {
+                        console.log('充氣支撐遊戲完成！');
+                        this.complete(true);
+                    }
+                }, 1000);
             }
         }
     }
