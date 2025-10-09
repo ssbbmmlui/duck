@@ -112,7 +112,7 @@ class InflationSupportGame extends MiniGame {
     loadAssets() {
         if (this.gameEngine && this.gameEngine.assetManager) {
             const assetManager = this.gameEngine.assetManager;
-            this.duckImage = assetManager.getAsset('duck_cleaned');
+            this.duckImage = assetManager.getAsset('before_inflation_duck');
             this.pumpImage = assetManager.getAsset('inflation_pump');
             this.stickImage = assetManager.getAsset('support_stick');
         }
