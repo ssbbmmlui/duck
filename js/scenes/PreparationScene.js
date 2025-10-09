@@ -456,10 +456,8 @@ class PreparationScene extends Scene {
         } else {
             // 失敗時允許重試
             this.showRetryMessage();
+            this.showSceneUI();
         }
-
-        // 顯示場景UI (在處理完成後顯示，確保按鈕文字已更新)
-        this.showSceneUI();
 
         this.currentMiniGame = null;
     }
