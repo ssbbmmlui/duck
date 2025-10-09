@@ -71,6 +71,7 @@ class InflationSupportGame extends MiniGame {
         this.inflationCompleted = false;
         this.supportCompleted = false;
         this.stickPlaced = false;
+        this.shouldRender = true; // 控制是否渲染
         
         // 設置支撐木棍的目標位置
         this.setupSupportTarget();
@@ -477,6 +478,9 @@ class InflationSupportGame extends MiniGame {
      * 渲染遊戲內容
      */
     renderGame(context) {
+        // 如果不應該渲染，直接返回
+        if (!this.shouldRender) return;
+
         // 渲染鴨胚
         this.renderDuckEmbryo(context);
         
@@ -922,10 +926,11 @@ class InflationSupportGame extends MiniGame {
     checkCompletion() {
         // 當充氣完成且木棍已放置時，自動完成遊戲
         if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
-            console.log('遊戲條件達成，自動完成');
+            console.log('遊戲條件達成，直接啟動下一個遊戲');
             console.log(`充氣完成: ${this.inflationCompleted}, 木棍放置: ${this.stickPlaced}, 進度: ${this.progress}`);
 
             this.supportCompleted = true;
+            this.isCompleted = true;
 
             console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
 
@@ -933,9 +938,71 @@ class InflationSupportGame extends MiniGame {
                 this.gameEngine.audioManager.playSound('success_sound');
             }
 
-            this.complete(true);
-        } else {
-            console.log(`檢查完成條件: 充氣=${this.inflationCompleted}, 木棍=${this.stickPlaced}, 完成=${this.isCompleted}, 進度=${this.progress.toFixed(2)}`);
+            // 延遲1秒後啟動下一個遊戲
+            setTimeout(() => {
+                this.startNextGame();
+            }, 1000);
+        }
+    }
+
+    /**
+     * 啟動下一個遊戲（燙皮上糖色）
+     */
+    startNextGame() {
+        console.log('啟動燙皮上糖色遊戲，覆蓋當前遊戲');
+
+        // 停止渲染當前遊戲
+        this.shouldRender = false;
+        this.isActive = false;
+
+        // 如果有場景引用，通知場景更新進度
+        if (this.config.scene) {
+            const scene = this.config.scene;
+
+            // 標記當前步驟完成
+            scene.gameEngine.progressManager.completeStep('inflation_support');
+
+            // 創建並啟動燙皮上糖色遊戲
+            const coloringGame = new window.ScaldingColoringGame({
+                gameEngine: this.gameEngine,
+                scene: scene,
+                gameAreaX: 50,
+                gameAreaY: 100,
+                gameAreaWidth: 700,
+                gameAreaHeight: 400,
+                duckDisplay: this.config.duckDisplay,
+                onProgressUpdate: (coloringLevel) => {
+                    if (scene.updateColoringProgress) {
+                        scene.updateColoringProgress(coloringLevel);
+                    }
+                }
+            });
+
+            // 替換當前遊戲
+            scene.currentMiniGame = coloringGame;
+            coloringGame.start();
+
+            // 設置完成回調
+            coloringGame.onComplete = (success, stats) => {
+                scene.onMiniGameComplete(success, stats);
+            };
+
+            // 清理當前遊戲的UI但保持場景活躍
+            this.hideControls();
+        }
+    }
+
+    /**
+     * 隱藏控制按鈕
+     */
+    hideControls() {
+        // 隱藏返回按鈕
+        if (this.backButton) {
+            this.backButton.visible = false;
+        }
+        // 隱藏跳過按鈕
+        if (this.skipButton) {
+            this.skipButton.visible = false;
         }
     }
 }
