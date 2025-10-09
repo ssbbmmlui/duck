@@ -72,6 +72,7 @@ class InflationSupportGame extends MiniGame {
         this.supportCompleted = false;
         this.stickPlaced = false;
         this.shouldRender = true; // 控制是否渲染
+        this.overInflationWarned = false; // 過度充氣警告標記
         
         // 設置支撐木棍的目標位置
         this.setupSupportTarget();
@@ -105,6 +106,7 @@ class InflationSupportGame extends MiniGame {
         this.supportCompleted = false;
         this.stickPlaced = false;
         this.optimalPressureTime = 0;
+        this.overInflationWarned = false;
         this.supportStick.isPlaced = false;
         this.supportStick.isDragging = false;
         this.airParticles = [];
@@ -452,26 +454,36 @@ class InflationSupportGame extends MiniGame {
      * 處理過度充氣
      */
     handleOverInflation() {
-        // 減少分數並顯示警告
-        this.stats.score = Math.max(0, this.stats.score - 5);
-        
-        if (this.gameEngine && this.gameEngine.uiManager) {
-            const warningLabel = this.gameEngine.uiManager.createLabel({
-                x: this.gameArea.x + this.gameArea.width / 2,
-                y: this.gameArea.y + 100,
-                text: '⚠️ 充氣過度！小心破皮！',
-                fontSize: 16,
-                color: '#FF4500',
-                align: 'center'
-            });
-            
+        // 只在第一次觸發警告時執行
+        if (!this.overInflationWarned) {
+            this.overInflationWarned = true;
+
+            // 減少分數並顯示警告
+            this.stats.score = Math.max(0, this.stats.score - 5);
+
+            if (this.gameEngine && this.gameEngine.uiManager) {
+                const warningLabel = this.gameEngine.uiManager.createLabel({
+                    x: this.gameArea.x + this.gameArea.width / 2,
+                    y: this.gameArea.y + 100,
+                    text: '⚠️ 充氣過度！小心破皮！',
+                    fontSize: 16,
+                    color: '#FF4500',
+                    align: 'center'
+                });
+
+                setTimeout(() => {
+                    this.gameEngine.uiManager.removeUIElement(warningLabel);
+                }, 2000);
+            }
+
+            // 強制停止充氣
+            this.isInflating = false;
+
+            // 3秒後重置警告標記，允許再次顯示
             setTimeout(() => {
-                this.gameEngine.uiManager.removeUIElement(warningLabel);
-            }, 2000);
+                this.overInflationWarned = false;
+            }, 3000);
         }
-        
-        // 強制停止充氣
-        this.isInflating = false;
     }
 
     /**
