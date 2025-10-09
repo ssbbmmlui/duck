@@ -488,6 +488,9 @@ class PreparationScene extends Scene {
                 this.updateStepIndicator();
                 this.updateNextButton();
 
+                // 顯示場景UI
+                this.showSceneUI();
+
                 // 自動開始下一個步驟並顯示載入畫面
                 setTimeout(() => {
                     if (this.currentStepIndex < this.preparationSteps.length) {

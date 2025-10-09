@@ -6,7 +6,7 @@
 class ScaldingColoringGame extends MiniGame {
     constructor(config = {}) {
         super({
-            name: '燙皮上糖色',
+            name: '燙皮上糖色遊戲',
             timeLimit: 0,
             successThreshold: 0.85,
             ...config

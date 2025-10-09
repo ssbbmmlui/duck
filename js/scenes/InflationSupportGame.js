@@ -999,8 +999,18 @@ class InflationSupportGame extends MiniGame {
                 scene.onMiniGameComplete(success, stats);
             };
 
+            // 設置返回回調
+            coloringGame.onBack = () => {
+                scene.onMiniGameBack();
+            };
+
             // 清理當前遊戲的UI但保持場景活躍
             this.hideControls();
+
+            // 隱藏場景的UI元素
+            if (scene.hideSceneUI) {
+                scene.hideSceneUI();
+            }
         }
     }
 
