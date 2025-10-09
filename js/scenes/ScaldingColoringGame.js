@@ -219,7 +219,13 @@ class ScaldingColoringGame extends MiniGame {
             this.progressLabel.setText(`塗抹進度: ${Math.round(this.coloring.coloringProgress)}%`);
         }
 
+        // Debug logging
+        if (this.coloring.coloringProgress > 0 && this.coloring.coloringProgress % 10 < 1) {
+            console.log(`上色進度: ${this.coloring.coloringProgress.toFixed(1)}%, 已塗抹: ${this.coloring.paintedCells}/${this.coloring.totalCells}, 完成標記: ${this.coloringCompleted}`);
+        }
+
         if (this.coloring.coloringProgress >= 85 && !this.coloringCompleted) {
+            console.log(`達到完成條件! 進度: ${this.coloring.coloringProgress}%, 正在完成遊戲...`);
             this.coloringCompleted = true;
             setTimeout(() => {
                 this.complete(true);
