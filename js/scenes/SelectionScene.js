@@ -62,13 +62,15 @@ class SelectionScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和鴨子相關圖片
-        await assetManager.loadImage('assets/images/backgrounds/selection_bg.png', 'background_selection');
-        await assetManager.loadImage('assets/images/duck/raw_duck.png', 'raw_duck');
-        await assetManager.loadImage('assets/images/duck/duck_highlight.png', 'duck_highlight');
-        await assetManager.loadImage('assets/images/ui/info_icon.png', 'info_icon');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/selection_bg.png', 'background_selection'),
+            assetManager.loadImage('assets/images/duck/raw_duck.png', 'raw_duck'),
+            assetManager.loadImage('assets/images/duck/duck_highlight.png', 'duck_highlight'),
+            assetManager.loadImage('assets/images/ui/info_icon.png', 'info_icon')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_selection');
         this.duckDisplay.duckImage = assetManager.getAsset('raw_duck');
     }

@@ -207,34 +207,30 @@ class SlicingScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和工作台圖片
-        await assetManager.loadImage('assets/images/backgrounds/slicing_bg.png', 'background_slicing');
-        await assetManager.loadImage('assets/images/workstation/cutting_board.png', 'cutting_board');
-        await assetManager.loadImage('assets/images/workstation/serving_plate.png', 'serving_plate');
-        await assetManager.loadImage('assets/images/workstation/knife_set.png', 'knife_set');
-        
-        // 載入鴨子不同狀態圖片
-        await assetManager.loadImage('assets/images/duck/duck_roasted_whole.png', 'duck_whole');
-        await assetManager.loadImage('assets/images/duck/duck_skin_sliced.png', 'duck_skin_sliced');
-        await assetManager.loadImage('assets/images/duck/duck_meat_sliced.png', 'duck_meat_sliced');
-        await assetManager.loadImage('assets/images/duck/duck_bones_remaining.png', 'duck_bones');
-        
-        // 載入切片和配菜圖片
-        await assetManager.loadImage('assets/images/slices/skin_slice.png', 'skin_slice');
-        await assetManager.loadImage('assets/images/slices/meat_slice.png', 'meat_slice');
-        await assetManager.loadImage('assets/images/accompaniments/pancake.png', 'pancake');
-        await assetManager.loadImage('assets/images/accompaniments/scallion.png', 'scallion');
-        await assetManager.loadImage('assets/images/accompaniments/cucumber.png', 'cucumber');
-        await assetManager.loadImage('assets/images/accompaniments/sauce_bowl.png', 'sauce_bowl');
-        
-        // 載入工具和效果圖片
-        await assetManager.loadImage('assets/images/tools/slicing_knife.png', 'slicing_knife');
-        await assetManager.loadImage('assets/images/effects/knife_trail.png', 'knife_trail');
-        await assetManager.loadImage('assets/images/effects/slice_particle.png', 'slice_particle');
-        await assetManager.loadImage('assets/images/effects/juice_drop.png', 'juice_drop');
-        await assetManager.loadImage('assets/images/effects/sparkle.png', 'sparkle');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/slicing_bg.png', 'background_slicing'),
+            assetManager.loadImage('assets/images/workstation/cutting_board.png', 'cutting_board'),
+            assetManager.loadImage('assets/images/workstation/serving_plate.png', 'serving_plate'),
+            assetManager.loadImage('assets/images/workstation/knife_set.png', 'knife_set'),
+            assetManager.loadImage('assets/images/duck/duck_roasted_whole.png', 'duck_whole'),
+            assetManager.loadImage('assets/images/duck/duck_skin_sliced.png', 'duck_skin_sliced'),
+            assetManager.loadImage('assets/images/duck/duck_meat_sliced.png', 'duck_meat_sliced'),
+            assetManager.loadImage('assets/images/duck/duck_bones_remaining.png', 'duck_bones'),
+            assetManager.loadImage('assets/images/slices/skin_slice.png', 'skin_slice'),
+            assetManager.loadImage('assets/images/slices/meat_slice.png', 'meat_slice'),
+            assetManager.loadImage('assets/images/accompaniments/pancake.png', 'pancake'),
+            assetManager.loadImage('assets/images/accompaniments/scallion.png', 'scallion'),
+            assetManager.loadImage('assets/images/accompaniments/cucumber.png', 'cucumber'),
+            assetManager.loadImage('assets/images/accompaniments/sauce_bowl.png', 'sauce_bowl'),
+            assetManager.loadImage('assets/images/tools/slicing_knife.png', 'slicing_knife'),
+            assetManager.loadImage('assets/images/effects/knife_trail.png', 'knife_trail'),
+            assetManager.loadImage('assets/images/effects/slice_particle.png', 'slice_particle'),
+            assetManager.loadImage('assets/images/effects/juice_drop.png', 'juice_drop'),
+            assetManager.loadImage('assets/images/effects/sparkle.png', 'sparkle')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_slicing');
     }
 

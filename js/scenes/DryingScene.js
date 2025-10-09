@@ -125,25 +125,23 @@ class DryingScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和晾胚相關圖片
-        await assetManager.loadImage('assets/images/backgrounds/drying_bg.png', 'background_drying');
-        await assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared');
-        await assetManager.loadImage('assets/images/duck/duck_hanging.png', 'duck_hanging');
-        await assetManager.loadImage('assets/images/duck/duck_drying.png', 'duck_drying');
-        await assetManager.loadImage('assets/images/duck/duck_dried.png', 'duck_dried');
-        
-        // 載入環境控制相關圖片
-        await assetManager.loadImage('assets/images/environment/thermometer.png', 'thermometer');
-        await assetManager.loadImage('assets/images/environment/hygrometer.png', 'hygrometer');
-        await assetManager.loadImage('assets/images/environment/fan.png', 'fan');
-        await assetManager.loadImage('assets/images/environment/hook.png', 'hanging_hook');
-        
-        // 載入效果圖片
-        await assetManager.loadImage('assets/images/effects/wind_lines.png', 'wind_effect');
-        await assetManager.loadImage('assets/images/effects/water_drop.png', 'water_drop');
-        await assetManager.loadImage('assets/images/effects/time_clock.png', 'time_clock');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/drying_bg.png', 'background_drying'),
+            assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared'),
+            assetManager.loadImage('assets/images/duck/duck_hanging.png', 'duck_hanging'),
+            assetManager.loadImage('assets/images/duck/duck_drying.png', 'duck_drying'),
+            assetManager.loadImage('assets/images/duck/duck_dried.png', 'duck_dried'),
+            assetManager.loadImage('assets/images/environment/thermometer.png', 'thermometer'),
+            assetManager.loadImage('assets/images/environment/hygrometer.png', 'hygrometer'),
+            assetManager.loadImage('assets/images/environment/fan.png', 'fan'),
+            assetManager.loadImage('assets/images/environment/hook.png', 'hanging_hook'),
+            assetManager.loadImage('assets/images/effects/wind_lines.png', 'wind_effect'),
+            assetManager.loadImage('assets/images/effects/water_drop.png', 'water_drop'),
+            assetManager.loadImage('assets/images/effects/time_clock.png', 'time_clock')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_drying');
         this.duckDisplay.duckImage = assetManager.getAsset('duck_prepared');
     }

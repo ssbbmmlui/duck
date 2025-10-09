@@ -46,14 +46,16 @@ class CompletionScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入完成場景相關資源
-        await assetManager.loadImage('assets/images/backgrounds/completion_bg.png', 'background_completion');
-        await assetManager.loadImage('assets/images/final_duck/complete_duck.png', 'final_duck');
-        await assetManager.loadImage('assets/images/ui/trophy.png', 'trophy');
-        await assetManager.loadImage('assets/images/ui/star_gold.png', 'star_gold');
-        await assetManager.loadImage('assets/images/ui/celebration.png', 'celebration');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/completion_bg.png', 'background_completion'),
+            assetManager.loadImage('assets/images/final_duck/complete_duck.png', 'final_duck'),
+            assetManager.loadImage('assets/images/ui/trophy.png', 'trophy'),
+            assetManager.loadImage('assets/images/ui/star_gold.png', 'star_gold'),
+            assetManager.loadImage('assets/images/ui/celebration.png', 'celebration')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_completion');
         this.finalDuckImage = assetManager.getAsset('final_duck');
     }

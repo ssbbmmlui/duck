@@ -125,23 +125,21 @@ class PreparationScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和製胚相關圖片
-        await assetManager.loadImage('assets/images/backgrounds/preparation_bg.png', 'background_preparation');
-        await assetManager.loadImage('assets/images/duck/duck_cleaned.png', 'duck_cleaned');
-        await assetManager.loadImage('assets/images/duck/duck_inflated.png', 'duck_inflated');
-        await assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared');
-        
-        // 載入製胚工具圖片
-        await assetManager.loadImage('assets/images/tools/inflation_pump.png', 'inflation_pump');
-        await assetManager.loadImage('assets/images/tools/support_stick.png', 'support_stick');
-        await assetManager.loadImage('assets/images/tools/hot_water_pot.png', 'hot_water_pot');
-        await assetManager.loadImage('assets/images/tools/sugar_syrup.png', 'sugar_syrup');
-        
-        // 載入效果圖片
-        await assetManager.loadImage('assets/images/effects/steam.png', 'steam_effect');
-        await assetManager.loadImage('assets/images/effects/sugar_glaze.png', 'sugar_glaze');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/preparation_bg.png', 'background_preparation'),
+            assetManager.loadImage('assets/images/duck/duck_cleaned.png', 'duck_cleaned'),
+            assetManager.loadImage('assets/images/duck/duck_inflated.png', 'duck_inflated'),
+            assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared'),
+            assetManager.loadImage('assets/images/tools/inflation_pump.png', 'inflation_pump'),
+            assetManager.loadImage('assets/images/tools/support_stick.png', 'support_stick'),
+            assetManager.loadImage('assets/images/tools/hot_water_pot.png', 'hot_water_pot'),
+            assetManager.loadImage('assets/images/tools/sugar_syrup.png', 'sugar_syrup'),
+            assetManager.loadImage('assets/images/effects/steam.png', 'steam_effect'),
+            assetManager.loadImage('assets/images/effects/sugar_glaze.png', 'sugar_glaze')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_preparation');
         this.duckDisplay.duckImage = assetManager.getAsset('duck_cleaned');
     }

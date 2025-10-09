@@ -60,7 +60,7 @@ class AssetManager {
     /**
      * 載入圖片資源（帶重試機制）
      */
-    async loadImage(path, name, retryCount = 3) {
+    async loadImage(path, name, retryCount = 1) {
         // 如果已經在載入中，返回現有的Promise
         if (this.loadingPromises.has(name)) {
             return this.loadingPromises.get(name);
@@ -90,7 +90,7 @@ class AssetManager {
             } catch (error) {
                 if (attempt === retryCount) {
                     console.warn(`圖片載入失敗: ${name} (${path})，已重試 ${retryCount} 次，使用佔位符`);
-                    
+
                     // 根據名稱選擇合適的佔位符
                     let placeholderType = 'default';
                     if (name.includes('background') || name.includes('bg')) {
@@ -102,15 +102,15 @@ class AssetManager {
                     } else if (name.includes('food') || name.includes('ingredient')) {
                         placeholderType = 'food_item';
                     }
-                    
+
                     const placeholder = this.placeholders.get(placeholderType) || this.placeholders.get('default');
                     this.assets.set(name, placeholder);
                     this.loadingPromises.delete(name);
                     return placeholder;
                 } else {
                     console.warn(`圖片載入失敗: ${name} (${path})，準備重試 (${attempt + 1}/${retryCount + 1})`);
-                    // 等待一段時間後重試
-                    await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+                    // 縮短重試等待時間
+                    await new Promise(resolve => setTimeout(resolve, 300));
                 }
             }
         }
@@ -122,22 +122,22 @@ class AssetManager {
     loadSingleImage(path, name, attempt) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            
-            // 設置超時
+
+            // 設置超時 (縮短為2秒)
             const timeout = setTimeout(() => {
                 reject(new Error(`圖片載入超時: ${name}`));
-            }, 10000); // 10秒超時
-            
+            }, 2000); // 2秒超時
+
             img.onload = () => {
                 clearTimeout(timeout);
                 resolve(img);
             };
-            
+
             img.onerror = () => {
                 clearTimeout(timeout);
                 reject(new Error(`圖片載入錯誤: ${name}`));
             };
-            
+
             // 添加緩存破壞參數以避免緩存問題
             const cacheBuster = attempt > 0 ? `?retry=${attempt}&t=${Date.now()}` : '';
             img.src = path + cacheBuster;

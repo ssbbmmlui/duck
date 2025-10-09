@@ -181,32 +181,28 @@ class RoastingScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和烤製相關圖片
-        await assetManager.loadImage('assets/images/backgrounds/roasting_bg.png', 'background_roasting');
-        await assetManager.loadImage('assets/images/oven/oven_body.png', 'oven_body');
-        await assetManager.loadImage('assets/images/oven/oven_door.png', 'oven_door');
-        await assetManager.loadImage('assets/images/oven/flame_small.png', 'flame_small');
-        await assetManager.loadImage('assets/images/oven/flame_medium.png', 'flame_medium');
-        await assetManager.loadImage('assets/images/oven/flame_large.png', 'flame_large');
-        
-        // 載入鴨子烤製階段圖片
-        await assetManager.loadImage('assets/images/duck/duck_raw_roasting.png', 'duck_raw');
-        await assetManager.loadImage('assets/images/duck/duck_cooking.png', 'duck_cooking');
-        await assetManager.loadImage('assets/images/duck/duck_golden.png', 'duck_golden');
-        await assetManager.loadImage('assets/images/duck/duck_roasted.png', 'duck_roasted');
-        
-        // 載入控制面板圖片
-        await assetManager.loadImage('assets/images/controls/temperature_gauge.png', 'temp_gauge');
-        await assetManager.loadImage('assets/images/controls/timer_display.png', 'timer_display');
-        await assetManager.loadImage('assets/images/controls/fuel_meter.png', 'fuel_meter');
-        
-        // 載入效果圖片
-        await assetManager.loadImage('assets/images/effects/smoke_particle.png', 'smoke_particle');
-        await assetManager.loadImage('assets/images/effects/steam_particle.png', 'steam_particle');
-        await assetManager.loadImage('assets/images/effects/oil_drop.png', 'oil_drop');
-        await assetManager.loadImage('assets/images/effects/heat_wave.png', 'heat_wave');
-        
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/roasting_bg.png', 'background_roasting'),
+            assetManager.loadImage('assets/images/oven/oven_body.png', 'oven_body'),
+            assetManager.loadImage('assets/images/oven/oven_door.png', 'oven_door'),
+            assetManager.loadImage('assets/images/oven/flame_small.png', 'flame_small'),
+            assetManager.loadImage('assets/images/oven/flame_medium.png', 'flame_medium'),
+            assetManager.loadImage('assets/images/oven/flame_large.png', 'flame_large'),
+            assetManager.loadImage('assets/images/duck/duck_raw_roasting.png', 'duck_raw'),
+            assetManager.loadImage('assets/images/duck/duck_cooking.png', 'duck_cooking'),
+            assetManager.loadImage('assets/images/duck/duck_golden.png', 'duck_golden'),
+            assetManager.loadImage('assets/images/duck/duck_roasted.png', 'duck_roasted'),
+            assetManager.loadImage('assets/images/controls/temperature_gauge.png', 'temp_gauge'),
+            assetManager.loadImage('assets/images/controls/timer_display.png', 'timer_display'),
+            assetManager.loadImage('assets/images/controls/fuel_meter.png', 'fuel_meter'),
+            assetManager.loadImage('assets/images/effects/smoke_particle.png', 'smoke_particle'),
+            assetManager.loadImage('assets/images/effects/steam_particle.png', 'steam_particle'),
+            assetManager.loadImage('assets/images/effects/oil_drop.png', 'oil_drop'),
+            assetManager.loadImage('assets/images/effects/heat_wave.png', 'heat_wave')
+        ]);
+
         this.backgroundImage = assetManager.getAsset('background_roasting');
     }
 

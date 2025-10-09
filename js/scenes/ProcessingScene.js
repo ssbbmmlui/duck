@@ -112,19 +112,21 @@ class ProcessingScene extends Scene {
      */
     async loadSceneAssets() {
         const assetManager = this.gameEngine.assetManager;
-        
-        // 載入背景和處理相關圖片
-        await assetManager.loadImage('assets/images/backgrounds/processing_bg.png', 'background_processing');
-        await assetManager.loadImage('assets/images/duck/raw_duck.png', 'duck_raw');
-        await assetManager.loadImage('assets/images/duck/processing_duck.png', 'processing_duck');
-        await assetManager.loadImage('assets/images/duck/feather_plucking_duck.png', 'feather_plucking_duck');
-        await assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers');
-        await assetManager.loadImage('assets/images/duck/anus_duck.png', 'anus_duck');
-        await assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened');
-        await assetManager.loadImage('assets/images/duck/processed_duck.png', 'processed_duck');
-        await assetManager.loadImage('assets/images/tools/feather_pluck.png', 'feather_pluck_tool');
-        await assetManager.loadImage('assets/images/tools/knife.png', 'knife_tool');
-        await assetManager.loadImage('assets/images/tools/water.png', 'water_tool');
+
+        // 並行載入所有圖片以加快速度
+        await Promise.all([
+            assetManager.loadImage('assets/images/backgrounds/processing_bg.png', 'background_processing'),
+            assetManager.loadImage('assets/images/duck/raw_duck.png', 'duck_raw'),
+            assetManager.loadImage('assets/images/duck/processing_duck.png', 'processing_duck'),
+            assetManager.loadImage('assets/images/duck/feather_plucking_duck.png', 'feather_plucking_duck'),
+            assetManager.loadImage('assets/images/duck/duck_no_feathers.png', 'duck_no_feathers'),
+            assetManager.loadImage('assets/images/duck/anus_duck.png', 'anus_duck'),
+            assetManager.loadImage('assets/images/duck/duck_opened.png', 'duck_opened'),
+            assetManager.loadImage('assets/images/duck/processed_duck.png', 'processed_duck'),
+            assetManager.loadImage('assets/images/tools/feather_pluck.png', 'feather_pluck_tool'),
+            assetManager.loadImage('assets/images/tools/knife.png', 'knife_tool'),
+            assetManager.loadImage('assets/images/tools/water.png', 'water_tool')
+        ]);
 
         this.backgroundImage = assetManager.getAsset('background_processing');
         this.duckDisplay.duckImage = assetManager.getAsset('processing_duck');
