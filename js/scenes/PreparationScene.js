@@ -129,7 +129,7 @@ class PreparationScene extends Scene {
         // 並行載入所有圖片以加快速度
         await Promise.all([
             assetManager.loadImage('assets/images/backgrounds/preparation_bg.png', 'background_preparation'),
-            assetManager.loadImage('assets/images/duck/duck_cleaned.png', 'duck_cleaned'),
+            assetManager.loadImage('assets/images/duck/before_inflation_duck.png', 'before_inflation_duck'),
             assetManager.loadImage('assets/images/duck/duck_inflated.png', 'duck_inflated'),
             assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared'),
             assetManager.loadImage('assets/images/tools/inflation_pump.png', 'inflation_pump'),
@@ -141,7 +141,7 @@ class PreparationScene extends Scene {
         ]);
 
         this.backgroundImage = assetManager.getAsset('background_preparation');
-        this.duckDisplay.duckImage = assetManager.getAsset('duck_cleaned');
+        this.duckDisplay.duckImage = assetManager.getAsset('before_inflation_duck');
     }
 
     /**
