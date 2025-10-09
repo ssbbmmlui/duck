@@ -439,7 +439,8 @@ class PreparationScene extends Scene {
      */
     onMiniGameComplete(success, stats) {
         const gameName = this.currentMiniGame ? this.currentMiniGame.name : '未知遊戲';
-        console.log(`${gameName}完成:`, success ? '成功' : '失敗');
+        console.log(`PreparationScene.onMiniGameComplete 被調用！遊戲: ${gameName}, 成功: ${success}`);
+        console.log(`當前步驟索引: ${this.currentStepIndex}, 總步驟數: ${this.preparationSteps.length}`);
 
         if (success) {
             // 根據遊戲名稱確定步驟ID
@@ -491,12 +492,14 @@ class PreparationScene extends Scene {
 
                 // 自動開始下一個步驟並顯示載入畫面
                 setTimeout(() => {
+                    console.log(`setTimeout 觸發: currentStepIndex=${this.currentStepIndex}, preparationSteps.length=${this.preparationSteps.length}`);
                     if (this.currentStepIndex < this.preparationSteps.length) {
                         console.log('自動開始下一個步驟');
                         this.showLoadingForNextStep();
                     } else {
-                        console.log('所有步驟完成，準備進入下一場景');
+                        console.log('所有步驟完成，準備進入下一場景，調用 showSceneUI()');
                         this.showSceneUI();
+                        console.log('showSceneUI() 已調用');
                     }
                 }, 1500);
             }

@@ -226,8 +226,10 @@ class ScaldingColoringGame extends MiniGame {
 
         if (this.coloring.coloringProgress >= 85 && !this.coloringCompleted) {
             console.log(`達到完成條件! 進度: ${this.coloring.coloringProgress}%, 正在完成遊戲...`);
+            console.log(`onComplete callback 是否存在: ${!!this.onComplete}`);
             this.coloringCompleted = true;
             setTimeout(() => {
+                console.log(`調用 complete(true)，onComplete: ${!!this.onComplete}`);
                 this.complete(true);
             }, 500);
         }
