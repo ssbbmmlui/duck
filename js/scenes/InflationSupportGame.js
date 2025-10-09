@@ -355,17 +355,17 @@ class InflationSupportGame extends MiniGame {
      */
     updateTotalProgress() {
         let totalProgress = 0;
-        
-        // 充氣進度 (70%)
-        const inflationProgress = Math.min(this.inflationLevel / this.targetInflationLevel, 1) * 0.7;
+
+        // 充氣進度 (70%) - 基於0-100%的充氣水平
+        const inflationProgress = (this.inflationLevel / 100) * 0.7;
         totalProgress += inflationProgress;
-        
+
         // 支撐進度 (30%)
         const supportProgress = (this.supportStick.placementAccuracy / 100) * 0.3;
         totalProgress += supportProgress;
-        
+
         this.updateProgress(totalProgress);
-        
+
         // 通知場景更新充氣進度
         if (this.config.onProgressUpdate) {
             this.config.onProgressUpdate(this.inflationLevel);
