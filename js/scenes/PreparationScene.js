@@ -491,14 +491,15 @@ class PreparationScene extends Scene {
 
                 // 自動開始下一個步驟或進入下一場景
                 setTimeout(() => {
+                    console.log(`檢查步驟完成狀態: ${this.currentStepIndex}/${this.preparationSteps.length}`);
                     if (this.currentStepIndex < this.preparationSteps.length) {
                         console.log('自動開始下一個步驟');
                         this.showLoadingForNextStep();
                     } else {
-                        console.log('所有步驟完成，自動進入下一場景');
+                        console.log('PreparationScene: 所有步驟完成，調用 proceedToNextScene()');
                         this.proceedToNextScene();
                     }
-                }, 1500);
+                }, 2000);
             }
         } else {
             // 失敗時允許重試
@@ -629,8 +630,12 @@ class PreparationScene extends Scene {
      * 進入下一個場景
      */
     proceedToNextScene() {
-        console.log('製胚階段完成，進入晾胚階段');
+        console.log('PreparationScene.proceedToNextScene() 被調用');
+        console.log('準備轉換到 DryingScene (drying)');
+        console.log('GameEngine:', this.gameEngine);
+        console.log('SceneManager:', this.gameEngine?.sceneManager);
         this.transitionToScene('drying');
+        console.log('transitionToScene("drying") 已調用');
     }
 
     /**

@@ -334,6 +334,8 @@ class SceneManager {
      * 切換場景
      */
     async changeScene(sceneName) {
+        console.log(`SceneManager.changeScene() 被調用，目標場景: "${sceneName}"`);
+
         if (this.isTransitioning) {
             console.warn('場景切換進行中，忽略新的切換請求');
             return;
@@ -342,34 +344,33 @@ class SceneManager {
         const SceneClass = this.scenes.get(sceneName);
         if (!SceneClass) {
             console.error(`找不到場景: ${sceneName}`);
+            console.error('已註冊的場景:', Array.from(this.scenes.keys()));
             return;
         }
 
+        console.log(`找到場景類別: ${SceneClass.name}`);
         this.isTransitioning = true;
 
         try {
-            // 創建新場景並立即設置為當前場景（處於載入狀態）
+            console.log(`創建新場景實例: ${sceneName}`);
             const newScene = new SceneClass(sceneName, this.gameEngine);
             newScene.isActive = true;
             newScene.isLoading = true;
 
-            // 離開當前場景
             if (this.currentScene) {
+                console.log(`離開當前場景: ${this.currentScene.name}`);
                 await this.currentScene.exit();
             }
 
-            // 設置新場景為當前場景
             this.currentScene = newScene;
-
-            // 進入新場景（這會載入資源）
+            console.log(`進入新場景: ${sceneName}`);
             await this.currentScene.enter();
 
-            // 更新遊戲狀態
             this.gameEngine.updateGameState({ currentScene: sceneName });
-
             console.log(`場景切換完成: ${sceneName}`);
         } catch (error) {
             console.error('場景切換失敗:', error);
+            console.error('錯誤堆疊:', error.stack);
         } finally {
             this.isTransitioning = false;
         }
