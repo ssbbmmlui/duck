@@ -540,7 +540,7 @@ class DryingScene extends Scene {
      */
     startHangingEnvironmentGame() {
         console.log('啟動懸掛和環境控制迷你遊戲');
-        
+
         // 開始懸掛環境迷你遊戲
         this.startMiniGame(HangingEnvironmentGame, {
             gameEngine: this.gameEngine,
@@ -555,6 +555,9 @@ class DryingScene extends Scene {
                 this.updateDryingProgress(progress);
             }
         });
+
+        console.log('Mini-game started. currentMiniGame:', this.currentMiniGame);
+        console.log('currentMiniGame isActive:', this.currentMiniGame ? this.currentMiniGame.isActive : 'no mini-game');
     }
 
     /**
