@@ -469,26 +469,36 @@ class PreparationScene extends Scene {
      */
     onStepComplete(stepId, success, stats) {
         console.log(`步驟 ${stepId} 完成:`, success ? '成功' : '失敗');
-        
+
         if (success) {
             // 標記步驟完成
             const step = this.preparationSteps.find(s => s.id === stepId);
             if (step) {
                 step.completed = true;
-                
+
                 // 更新鴨胚顯示狀態
                 this.updateDuckDisplayState(stepId);
-                
+
                 // 更新進度管理器
                 this.gameEngine.progressManager.completeStep(stepId);
-                
+
                 // 顯示成功消息
                 this.showSuccessMessage(step.name, stats.score);
-                
+
                 // 移動到下一步驟
                 this.currentStepIndex++;
                 this.updateStepIndicator();
                 this.updateNextButton();
+
+                // 自動開始下一個步驟
+                setTimeout(() => {
+                    if (this.currentStepIndex < this.preparationSteps.length) {
+                        console.log('自動開始下一個步驟');
+                        this.startCurrentStep();
+                    } else {
+                        console.log('所有步驟完成，準備進入下一場景');
+                    }
+                }, 1500);
             }
         } else {
             // 失敗時允許重試
