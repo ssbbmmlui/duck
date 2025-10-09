@@ -216,22 +216,6 @@ class Scene {
         this.currentMiniGame.onComplete = (success, stats) => {
             this.onMiniGameComplete(success, stats);
         };
-
-        // 設置返回回調
-        this.currentMiniGame.onBack = () => {
-            console.log('玩家點擊返回按鈕');
-            this.currentMiniGame.cleanup();
-            this.currentMiniGame = null;
-            this.onMiniGameBack();
-        };
-
-        // 設置跳過回調
-        this.currentMiniGame.onSkip = () => {
-            console.log('玩家點擊跳過按鈕');
-            this.currentMiniGame.cleanup();
-            this.currentMiniGame = null;
-            this.onMiniGameSkip();
-        };
     }
 
     /**
@@ -249,30 +233,6 @@ class Scene {
         this.currentMiniGame = null;
     }
 
-    /**
-     * 迷你遊戲返回回調
-     */
-    onMiniGameBack() {
-        console.log('從迷你遊戲返回');
-        // 子類別可以覆寫此方法來處理返回邏輯
-        // 默認行為：顯示場景UI
-        if (this.showSceneUI) {
-            this.showSceneUI();
-        }
-    }
-
-    /**
-     * 迷你遊戲跳過回調
-     */
-    onMiniGameSkip() {
-        console.log('跳過迷你遊戲');
-        // 子類別可以覆寫此方法來處理跳過邏輯
-        // 默認行為：當作成功完成
-        this.onMiniGameComplete(true, { score: 0, skipped: true });
-        if (this.showSceneUI) {
-            this.showSceneUI();
-        }
-    }
 
     /**
      * 切換到下一個場景

@@ -102,29 +102,7 @@ class MiniGame {
             color: '#32CD32'
         });
 
-        // 創建返回按鈕
-        this.backButton = uiManager.createButton({
-            x: 20,
-            y: canvas.height - 70,
-            width: 100,
-            height: 40,
-            text: '返回',
-            fontSize: 16,
-            onClick: () => this.handleBack()
-        });
-
-        // 創建跳過按鈕
-        this.skipButton = uiManager.createButton({
-            x: canvas.width - 120,
-            y: canvas.height - 70,
-            width: 100,
-            height: 40,
-            text: '跳過',
-            fontSize: 16,
-            onClick: () => this.handleSkip()
-        });
-
-        this.uiElements.push(this.instructions, this.progressBar, this.backButton, this.skipButton);
+        this.uiElements.push(this.instructions, this.progressBar);
     }
 
     /**
@@ -421,35 +399,6 @@ class MiniGame {
         this.isActive = true;
     }
 
-    /**
-     * 處理返回按鈕
-     */
-    handleBack() {
-        console.log(`${this.name}: 玩家點擊返回`);
-        if (this.onBack) {
-            this.onBack();
-        } else {
-            // 允許除錯時返回，不標記為失敗
-            this.isActive = false;
-            this.isCompleted = false;
-            if (this.scene && this.scene.onMiniGameComplete) {
-                this.scene.onMiniGameComplete(false, this.stats);
-            }
-        }
-    }
-
-    /**
-     * 處理跳過按鈕
-     */
-    handleSkip() {
-        console.log(`${this.name}: 玩家點擊跳過`);
-        if (this.onSkip) {
-            this.onSkip();
-        } else {
-            // 允許除錯時跳過遊戲
-            this.complete(true);
-        }
-    }
 
     /**
      * 清理資源
@@ -467,8 +416,6 @@ class MiniGame {
         this.uiElements = [];
         this.instructions = null;
         this.progressBar = null;
-        this.backButton = null;
-        this.skipButton = null;
 
         console.log(`清理迷你遊戲: ${this.name}`);
     }

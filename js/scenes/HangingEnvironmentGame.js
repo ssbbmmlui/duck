@@ -106,9 +106,6 @@ class HangingEnvironmentGame extends MiniGame {
     start() {
         super.start();
         console.log('懸掛環境控制遊戲開始');
-        console.log('遊戲狀態:', this.gameState);
-        console.log('鴨胚位置:', this.hangingSystem.duck);
-        console.log('isActive:', this.isActive);
 
         this.gameState = 'hanging';
         this.showInstructions();
@@ -346,14 +343,11 @@ class HangingEnvironmentGame extends MiniGame {
      * 處理輸入事件
      */
     handleInput(event) {
-        console.log('HangingEnvironmentGame.handleInput called, isActive:', this.isActive, 'event:', event.type);
         if (!this.isActive) return false;
 
         const rect = this.gameEngine.canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-
-        console.log('Mouse position:', x, y, 'Game state:', this.gameState);
 
         if (event.type === 'mousedown') {
             return this.handleMouseDown(x, y);

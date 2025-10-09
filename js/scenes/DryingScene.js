@@ -555,9 +555,6 @@ class DryingScene extends Scene {
                 this.updateDryingProgress(progress);
             }
         });
-
-        console.log('Mini-game started. currentMiniGame:', this.currentMiniGame);
-        console.log('currentMiniGame isActive:', this.currentMiniGame ? this.currentMiniGame.isActive : 'no mini-game');
     }
 
     /**
