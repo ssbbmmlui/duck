@@ -292,6 +292,9 @@ class ScaldingColoringGame extends MiniGame {
         
         // 更新總進度
         this.updateTotalProgress();
+        
+        // 檢查遊戲完成條件
+        this.checkCompletion();
     }
 
     /**
