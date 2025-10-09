@@ -490,11 +490,11 @@ class PreparationScene extends Scene {
                 this.updateStepIndicator();
                 this.updateNextButton();
 
-                // 自動開始下一個步驟
+                // 自動開始下一個步驟並顯示載入畫面
                 setTimeout(() => {
                     if (this.currentStepIndex < this.preparationSteps.length) {
                         console.log('自動開始下一個步驟');
-                        this.startCurrentStep();
+                        this.showLoadingForNextStep();
                     } else {
                         console.log('所有步驟完成，準備進入下一場景');
                     }
@@ -504,6 +504,30 @@ class PreparationScene extends Scene {
             // 失敗時允許重試
             this.showRetryMessage();
         }
+    }
+
+    /**
+     * 顯示載入畫面並開始下一步驟
+     */
+    showLoadingForNextStep() {
+        // 設置載入狀態
+        this.isLoading = true;
+
+        // 隱藏所有UI
+        this.hideSceneUI();
+        this.hideEducationPanel();
+
+        // 清理當前迷你遊戲
+        if (this.currentMiniGame) {
+            this.currentMiniGame.cleanup();
+            this.currentMiniGame = null;
+        }
+
+        // 1秒後開始下一步驟
+        setTimeout(() => {
+            this.isLoading = false;
+            this.startCurrentStep();
+        }, 1000);
     }
 
     /**
@@ -610,18 +634,48 @@ class PreparationScene extends Scene {
     }
 
     /**
+     * 自定義載入畫面
+     */
+    renderLoadingScreen(context) {
+        const canvas = context.canvas;
+
+        // 填充背景
+        const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#2c3e50');
+        gradient.addColorStop(1, '#34495e');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 渲染載入文字
+        context.fillStyle = '#FFFFFF';
+        context.font = 'bold 32px Microsoft JhengHei, sans-serif';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+
+        const nextStep = this.preparationSteps[this.currentStepIndex];
+        const loadingText = nextStep ? `準備 ${nextStep.name} ...` : '載入中...';
+        context.fillText(loadingText, canvas.width / 2, canvas.height / 2);
+
+        // 渲染載入動畫點
+        const dots = '.'.repeat((Math.floor(Date.now() / 500) % 4));
+        context.fillStyle = '#FFFFFF';
+        context.font = 'bold 32px Microsoft JhengHei, sans-serif';
+        context.fillText(dots, canvas.width / 2 + 150, canvas.height / 2);
+    }
+
+    /**
      * 渲染場景特定內容
      */
     renderScene(context) {
         // 渲染鴨胚展示區域
         this.renderDuckDisplay(context);
-        
+
         // 渲染製胚工具
         this.renderPreparationTools(context);
-        
+
         // 渲染製胚效果
         this.renderPreparationEffects(context);
-        
+
         // 渲染教育面板背景
         if (this.showingEducation) {
             this.renderEducationPanelBackground(context);
