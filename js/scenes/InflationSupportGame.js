@@ -68,6 +68,7 @@ class InflationSupportGame extends MiniGame {
         this.gamePhase = 'inflation'; // inflation, support_placement
         this.inflationCompleted = false;
         this.supportCompleted = false;
+        this.stickPlaced = false;
         
         // 設置支撐木棍的目標位置
         this.setupSupportTarget();
@@ -99,6 +100,7 @@ class InflationSupportGame extends MiniGame {
         this.gamePhase = 'inflation';
         this.inflationCompleted = false;
         this.supportCompleted = false;
+        this.stickPlaced = false;
         this.supportStick.isPlaced = false;
         this.supportStick.isDragging = false;
         this.airParticles = [];
@@ -272,26 +274,6 @@ class InflationSupportGame extends MiniGame {
         this.supportStick.placementAccuracy = Math.max(0,
             100 - (distance / maxDistance) * 100
         );
-
-        // 檢查是否放置正確（無論是否正在拖拽都檢查）
-        if (this.supportStick.placementAccuracy >= 80 && !this.supportStick.isPlaced) {
-            this.supportStick.isPlaced = true;
-            this.supportCompleted = true;
-
-            // 播放成功音效
-            if (this.gameEngine.gameState.settings.soundEnabled) {
-                this.gameEngine.audioManager.playSound('success_sound');
-            }
-
-            // 立即完成遊戲
-            console.log('充氣支撐遊戲完成！');
-            // 確保進度達到成功閾值
-            this.updateTotalProgress();
-            // 使用 requestAnimationFrame 確保在下一幀完成
-            requestAnimationFrame(() => {
-                this.complete(true);
-            });
-        }
     }
 
     /**
@@ -337,7 +319,7 @@ class InflationSupportGame extends MiniGame {
      */
     checkPhaseTransition() {
         if (this.gamePhase === 'inflation' &&
-            this.inflationLevel >= this.targetInflationLevel &&
+            this.inflationLevel >= 10 &&
             !this.inflationCompleted) {
 
             this.inflationCompleted = true;
@@ -826,12 +808,18 @@ class InflationSupportGame extends MiniGame {
      */
     handleMouseUp(x, y) {
         this.isInflating = false;
-        
+
         if (this.supportStick.isDragging) {
             this.supportStick.isDragging = false;
+
+            if (this.gamePhase === 'support_placement' && !this.stickPlaced) {
+                this.stickPlaced = true;
+                this.showCompletionButton();
+            }
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -873,12 +861,54 @@ class InflationSupportGame extends MiniGame {
     }
 
     /**
+     * 顯示完成按鈕
+     */
+    showCompletionButton() {
+        if (!this.completionButton && this.gameEngine && this.gameEngine.uiManager) {
+            const centerX = this.gameArea ? this.gameArea.x + this.gameArea.width / 2 : 400;
+            const bottomY = this.gameArea ? this.gameArea.y + this.gameArea.height - 40 : 440;
+
+            this.completionButton = this.gameEngine.uiManager.createButton({
+                x: centerX - 50,
+                y: bottomY,
+                width: 100,
+                height: 35,
+                text: '完成',
+                onClick: () => {
+                    this.completeGame();
+                },
+                backgroundColor: '#32CD32',
+                hoverColor: '#28A745',
+                textColor: '#FFFFFF'
+            });
+
+            this.uiElements.push(this.completionButton);
+        }
+    }
+
+    /**
+     * 完成遊戲
+     */
+    completeGame() {
+        this.supportCompleted = true;
+        this.updateTotalProgress();
+
+        console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
+
+        if (this.gameEngine.gameState.settings.soundEnabled) {
+            this.gameEngine.audioManager.playSound('success_sound');
+        }
+
+        requestAnimationFrame(() => {
+            this.complete(true);
+        });
+    }
+
+    /**
      * 檢查遊戲完成條件
      */
     checkCompletion() {
-        if (this.inflationCompleted && this.supportCompleted && !this.isCompleted) {
-            this.complete(true);
-        }
+        // 不再自動檢查完成，需要玩家點擊完成按鈕
     }
 }
 // 匯出到全域作用域
