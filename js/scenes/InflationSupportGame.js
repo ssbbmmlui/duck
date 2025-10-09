@@ -411,16 +411,17 @@ class InflationSupportGame extends MiniGame {
             totalProgress += 0.3;
         }
 
+        const oldProgress = this.progress;
         this.updateProgress(totalProgress);
+
+        // 只在進度變化時記錄
+        if (Math.abs(oldProgress - this.progress) > 0.01) {
+            console.log(`進度更新: ${(this.progress * 100).toFixed(1)}% (充氣完成: ${this.inflationCompleted}, 木棍放置: ${this.stickPlaced})`);
+        }
 
         // 通知場景更新充氣進度
         if (this.config.onProgressUpdate) {
             this.config.onProgressUpdate(this.inflationLevel);
-        }
-
-        // 檢查是否可以自動完成
-        if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
-            this.checkCompletion();
         }
     }
 
@@ -919,6 +920,8 @@ class InflationSupportGame extends MiniGame {
         // 當充氣完成且木棍已放置時，自動完成遊戲
         if (this.inflationCompleted && this.stickPlaced && !this.isCompleted) {
             console.log('遊戲條件達成，自動完成');
+            console.log(`充氣完成: ${this.inflationCompleted}, 木棍放置: ${this.stickPlaced}, 進度: ${this.progress}`);
+
             this.supportCompleted = true;
 
             console.log(`充氣支撐遊戲完成！充氣水平: ${this.inflationLevel.toFixed(1)}%, 支撐精確度: ${this.supportStick.placementAccuracy.toFixed(1)}%`);
@@ -928,6 +931,8 @@ class InflationSupportGame extends MiniGame {
             }
 
             this.complete(true);
+        } else {
+            console.log(`檢查完成條件: 充氣=${this.inflationCompleted}, 木棍=${this.stickPlaced}, 完成=${this.isCompleted}, 進度=${this.progress.toFixed(2)}`);
         }
     }
 }
