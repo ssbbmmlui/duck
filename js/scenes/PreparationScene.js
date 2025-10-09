@@ -132,7 +132,7 @@ class PreparationScene extends Scene {
             assetManager.loadImage('assets/images/duck/before_inflation_duck.png', 'before_inflation_duck'),
             assetManager.loadImage('assets/images/duck/duck_inflated.png', 'duck_inflated'),
             assetManager.loadImage('assets/images/duck/duck_prepared.png', 'duck_prepared'),
-            assetManager.loadImage('assets/images/tools/inflation_pump.png', 'inflation_pump'),
+            assetManager.loadImage('assets/images/tools/pump.png', 'inflation_pump'),
             assetManager.loadImage('assets/images/tools/support_stick.png', 'support_stick'),
             assetManager.loadImage('assets/images/tools/hot_water_pot.png', 'hot_water_pot'),
             assetManager.loadImage('assets/images/tools/sugar_syrup.png', 'sugar_syrup'),
