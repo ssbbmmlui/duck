@@ -155,16 +155,15 @@ class WeightMeasurementGame extends MiniGame {
         } else {
             this.duck.x += this.duck.moveSpeed * this.duck.moveDirection;
 
-            const distanceFromBase = this.duck.x - this.duck.baseX;
-            if (Math.abs(distanceFromBase) >= this.duck.moveRange) {
-                this.duck.moveDirection *= -1;
-                this.duck.x = this.duck.baseX + this.duck.moveRange * Math.sign(distanceFromBase);
-            }
-
             const isOnScale = this.checkIfOnScale();
             if (!isOnScale) {
                 this.duckEscaped();
                 return;
+            }
+
+            const distanceFromBase = this.duck.x - this.duck.baseX;
+            if (Math.abs(distanceFromBase) >= this.duck.moveRange) {
+                this.duck.moveDirection *= -1;
             }
 
             this.measurementState.weighingTimer += deltaTime;
